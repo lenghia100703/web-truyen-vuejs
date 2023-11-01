@@ -1,17 +1,14 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus'
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-import axios from 'axios'
+import axios from 'axios';
 
-import App from '@/App.vue'
-import router from '@/router'
-import { useAuthStore } from '@/stores/useAuthStore'
+import App from '@/App.vue';
+import router from '@/router';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-const app = createApp(App)
-
-axios.defaults.baseURL = 'http://localhost:8888/v1';
-axios.defaults.withCredentials = true;
+const app = createApp(App);
 
 router.beforeEach((to, from, next) => {
     const authStore = useAuthStore();
@@ -33,9 +30,8 @@ router.beforeEach((to, from, next) => {
 });
 
 
+app.use(ElementPlus);
+app.use(createPinia());
+app.use(router);
 
-app.use(ElementPlus)
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+app.mount('#app');

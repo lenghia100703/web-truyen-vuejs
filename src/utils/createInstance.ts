@@ -1,12 +1,13 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useAuthStore, type UserInfo } from '@/stores/useAuthStore';
+import { http } from '@/utils/http';
 
 const authStore = useAuthStore();
 
 const refreshToken = async () => {
     try {
-        const res = await axios.post('/auth/refresh', {
+        const res = await http.post('/auth/refresh', {}, {
             withCredentials: true,
         });
         return res.data;
@@ -23,7 +24,10 @@ interface Token {
 }
 
 export const createAxiosJwt = (user: UserInfo | null) => {
-    const newInstance = axios.create();
+    const newInstance = axios.create({
+        withCredentials: true,
+        baseURL: 'http://localhost:8888/v1',
+    });
 
     if (user !== null) {
         newInstance.interceptors.request.use(
@@ -34,12 +38,12 @@ export const createAxiosJwt = (user: UserInfo | null) => {
                     const data = await refreshToken();
                     const refreshUser = {
                         ...user,
-                        accessToken: data.accessToken,
+                        accessToken: data?.accessToken,
                     };
                     authStore.userInfo = refreshUser;
                     localStorage.setItem('userInfo', JSON.stringify(refreshUser));
                     console.log('relogin successful');
-                    config.headers['token'] = 'Bearer ' + data.accessToken;
+                    config.headers['token'] = 'Bearer ' + data?.accessToken;
                 }
                 return config;
             },

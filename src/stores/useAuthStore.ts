@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
+import { AuthServices } from '@/services/auth/AuthServices';
 
 
 export interface UserInfo {
@@ -18,7 +19,7 @@ export interface UserInfo {
 interface AuthState {
     isLoggedIn: boolean;
     userInfo: UserInfo | null;
-} 
+}
 
 const loggedInData = localStorage.getItem('isLoggedIn');
 const userInfoData = localStorage.getItem('userInfo');
@@ -36,32 +37,29 @@ export const useAuthStore = defineStore({
     actions: {
         async login(user: any) {
             try {
-                const res = await axios.post('/auth/login', user);
+                this.userInfo = await AuthServices.login(user);
                 this.isLoggedIn = true;
-                this.userInfo = res.data;
                 localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('userInfo', JSON.stringify(res.data));
+                localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
                 console.log('login successful');
             } catch (error) {
                 console.error('Login failed:' + error);
             }
         },
 
-        async logout(user: UserInfo) {
-            try {
-                await axios.post('/auth/logout', user._id, {
-                    headers: {
-                        token: `Bearer ${user.accessToken}`,
-                    },
-                });
+        logout(user: any, httpJwt: any) {
+
+            AuthServices.logout(user, httpJwt).then(res => {
                 this.isLoggedIn = false;
                 this.userInfo = null;
                 localStorage.removeItem('isLoggedIn');
                 localStorage.removeItem('userInfo');
                 console.log('logout successful');
-            } catch (error) {
-                console.error('Logout failed:' + error);
-            }
+            }).catch((error) => {
+                console.error("Fail " + error)
+            })
+
+
         },
     },
 });

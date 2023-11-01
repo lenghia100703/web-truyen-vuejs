@@ -1,17 +1,17 @@
 <template>
-    <form class="form-search" @submit="handleSubmit">
-        <div class="doc-search">
-            <input type="text" v-model="searchText" class="search-input" @focus="handleFocus" spellcheck="false" />
-            <button class="search-btn" type="submit">
-                <span class="search-icon">
-                    <svg width="20" height="20" class="DocSearch-Search-Icon" viewBox="0 0 20 20">
+    <form class='form-search' @submit='handleSubmit'>
+        <div class='doc-search'>
+            <input type='text' v-model='searchText' class='search-input' @focus='handleFocus' spellcheck='false' />
+            <button class='search-btn' type='submit'>
+                <span class='search-icon'>
+                    <svg width='20' height='20' class='DocSearch-Search-Icon' viewBox='0 0 20 20'>
                         <path
-                            d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z"
-                            stroke="currentColor"
-                            fill="none"
-                            fill-rule="evenodd"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            d='M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z'
+                            stroke='currentColor'
+                            fill='none'
+                            fill-rule='evenodd'
+                            stroke-linecap='round'
+                            stroke-linejoin='round'
                         ></path>
                     </svg>
                 </span>
@@ -19,16 +19,16 @@
         </div>
     </form>
 
-    <div class="search-results" v-if="searchResults.length > 0 && showSearchResults">
+    <div class='search-results' v-if='searchResults.length > 0 && showSearchResults'>
         <ul>
-            <li v-for="(result, index) in searchResults" :key="index" @click="handleFocusLi">
-                <router-link :to="`/truyen-tranh/${result.slug}`" class="item-container">
-                    <div class="item-container-left">
-                        <img :src="result.image" :alt="result.name" class="img-item" />
+            <li v-for='(result, index) in searchResults' :key='index' @click='handleFocusLi'>
+                <router-link :to='`/truyen-tranh/${result.slug}`' class='item-container'>
+                    <div class='item-container-left'>
+                        <img :src='result.image' :alt='result.name' class='img-item' />
                     </div>
-                    <div class="item-container-right">
-                        <h6 class="name-item">{{ result.name }}</h6>
-                        <span class="category-item">Số lượng chapter: {{ result.chapters.length }}</span>
+                    <div class='item-container-right'>
+                        <h6 class='name-item'>{{ result.name }}</h6>
+                        <span class='category-item'>Số lượng chapter: {{ result.chapters.length }}</span>
                     </div>
                 </router-link>
             </li>
@@ -36,12 +36,12 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script lang='ts' setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
 import debounce from 'lodash.debounce';
 import type { Comic } from '@/views/ComicDetailView.vue';
 import router from '@/router';
+import { ComicServices } from '@/services/comic/ComicServices';
 
 const searchText = ref<string>('');
 const searchResults = ref<Comic[]>([]);
@@ -72,8 +72,8 @@ watch(
     debounce(async () => {
         if (searchText.value.length > 0) {
             try {
-                const res = await axios.get(`/comic/search?q=${searchText.value}&page=1`);
-                searchResults.value = res.data.comics;
+                const res = await ComicServices.getComicByName(searchText.value);
+                searchResults.value = res.comics;
                 showSearchResults.value = true;
             } catch (error) {
                 console.error('Failed to watch' + error);

@@ -19,6 +19,13 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { ElMessage } from 'element-plus';
+import { ChapterServices } from '@/services/chapter/ChapterServices';
+import { createAxiosJwt } from '@/utils/createInstance';
+
+const authStore = useAuthStore();
+const httpJwt = createAxiosJwt(authStore.userInfo)
 
 const visible = ref<boolean>(false);
 const imageInput = ref<HTMLInputElement | null>(null);
@@ -27,6 +34,7 @@ const uploadForm = ref<{
     _id: string;
     title: string;
 }>();
+const _id = ref<string>('');
 const title = ref<string>('');
 
 const handleChangeImages = () => {
@@ -35,10 +43,29 @@ const handleChangeImages = () => {
     }
 };
 
-const handleUpload = () => {};
-
-const openModal = () => {
+const openModal = (rowData: any) => {
     visible.value = true;
+    _id.value = rowData._id;
+};
+
+const handleUpload = async () => {
+    const formData = new FormData();
+    formData.append('title', title.value);
+    images.value?.forEach((image, index) => {
+        formData.append('images', image, `image${index + 1}`);
+    });
+    try {
+        await ChapterServices.create(formData, _id.value, authStore.userInfo, httpJwt)
+        visible.value = false;
+        ElMessage({
+            message: 'Đăng chương truyện thành công.',
+            type: 'success',
+        });
+    } catch (error) {
+        console.error('Failed to upload chapter' + error);
+        visible.value = true;
+        ElMessage.error('Đăng thất bại.');
+    }
 };
 
 defineExpose({

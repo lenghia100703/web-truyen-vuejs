@@ -11,7 +11,7 @@ import Card from '@/components/Card.vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Comic } from '@/views/ComicDetailView.vue';
-import axios from 'axios';
+import { ComicServices } from '@/services/comic/ComicServices';
 
 const route = useRoute();
 console.log(route.params.searchText);
@@ -19,8 +19,8 @@ const searchText = route.params.searchText;
 const comicsData = ref<Comic[]>();
 onMounted(async () => {
     try {
-        const res = await axios.get(`/comic/search?q=${searchText}&page=1`);
-        comicsData.value = res.data.comics;
+        const res = await ComicServices.getComicByName(searchText);
+        comicsData.value = res.comics;
     } catch (error) {
         console.error('Failed to load comic' + error);
     }

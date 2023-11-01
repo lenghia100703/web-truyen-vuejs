@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-        <!-- <pre>{{ comicsData }}</pre> -->
         <div v-for="comicData in comicsData" :key="comicData._id">
             <Card :data="comicData" />
         </div>
@@ -12,8 +11,9 @@ import Card from '@/components/Card.vue';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useComicStore } from '@/stores/useComicStore';
-import axios from 'axios';
 import type { Comic } from '@/views/ComicDetailView.vue';
+import { CategoryServices } from '@/services/category/CategoryServices';
+import { ComicServices } from '@/services/comic/ComicServices';
 
 const route = useRoute();
 const comicStore = useComicStore();
@@ -26,9 +26,8 @@ onMounted(async () => {
             await comicStore.getAllComics();
             comicsData.value = comicStore.comics;
         } else {
-            const cate = await axios.get(`/category/slug/${categorySlug.value}`);
-            const res = await axios.get(`/comic/category/${cate.data[0]._id}`);
-            comicsData.value = res.data;
+            const cate = await CategoryServices.getCategoryBySlug(categorySlug.value);
+            comicsData.value = await ComicServices.getComicByCategory(cate[0]._id);
         }
     } catch (error) {
         console.error('Failed to load category' + error);
