@@ -34,7 +34,7 @@
                     </el-form-item>
                 </el-form>
                 <span>
-                    <el-button type="success">Theo dõi</el-button>
+                    <el-button :type="type">{{ isFollowed ? 'Theo dõi' : 'Hủy theo dõi' }}</el-button>
                     <span style="margin-left: 8px">{{ comicBySlug?.comic?.followCount }} Lượt theo dõi</span>
                 </span>
             </el-col>
@@ -82,10 +82,12 @@
 
 <script lang="ts" setup>
 import { useRoute } from 'vue-router';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
 import router from '@/router/index';
 import type { UserInfo } from '../stores/useAuthStore';
+import { useAuthStore } from '../stores/useAuthStore';
+import { createAxiosJwt } from '@/utils/createInstance';
 
 export interface Comic {
     _id: string;
@@ -110,34 +112,105 @@ export interface Category {
 }
 
 interface ComicBySlug {
-    comic: Comic | null;
-    author: UserInfo | null;
+    comic: Comic;
+    author: UserInfo;
 }
 
 const route = useRoute();
 const slug = route.params.slug;
-const comicBySlug = reactive<ComicBySlug>({
-    comic: null,
-    author: null,
+const comicBySlug = ref<ComicBySlug | null>({
+    comic: {
+        _id: '',
+        name: '',
+        description: '',
+        userId: '',
+        likeCount: 0,
+        view: 0,
+        slug: '',
+        image: '',
+        followCount: 0,
+        category: '',
+        chapters: [],
+        status: false,
+    },
+    author: {
+        _id: '',
+        admin: false,
+        username: '',
+        accessToken: '',
+        refreshToken: '',
+        followComic: [],
+        address: '',
+        avatar: '',
+        phone: '',
+        email: '',
+    },
 });
 const category = ref<Category | null>(null);
+const authStore = useAuthStore();
+const axiosJwt = createAxiosJwt(authStore.userInfo);
+const isFollowed = computed({
+    get() {
+        if (comicBySlug.value?.comic._id) {
+            let x: boolean = authStore.userInfo?.followComic.includes(comicBySlug.value?.comic._id) as boolean;
+            return x;
+        }
+    },
+    set(value) {
+        isFollowed.value = value;
+    },
+});
+
+const type = computed(() => {
+    if (!isFollowed.value) {
+        return 'success';
+    } else {
+        return 'danger';
+    }
+});
+
+const handleFollow = async () => {
+    try {
+        await axiosJwt.put(`/user/follow/${comicBySlug.value?.comic._id}`, {
+            headers: {
+                token: `Bearer ${authStore.userInfo?.accessToken}`,
+            },
+        });
+        isFollowed.value = true;
+    } catch (error) {
+        console.error('Failed to follow' + error);
+    }
+};
+
+const handleUnFollow = async () => {
+    try {
+        await axiosJwt.put(`/user/unfollow/${comicBySlug.value?.comic._id}`, {
+            headers: {
+                token: `Bearer ${authStore.userInfo?.accessToken}`,
+            },
+        });
+        isFollowed.value = false;
+    } catch (error) {
+        console.error('Failed to follow' + error);
+    }
+};
 
 onMounted(async () => {
     try {
         const res = await axios.get(`/comic/slug/${slug}`);
         const cate = await axios.get(`/category/${res.data.comic.category}`);
-        Object.assign(comicBySlug, res.data);
+        comicBySlug.value = res.data;
         category.value = cate.data;
     } catch (error) {
         console.error('Get Comic By Slug Failed: ' + error);
     }
 });
 
-const status = computed(() => (comicBySlug?.comic?.status ? 'Đã hoàn thành' : 'Đang tiến hành'));
+const status = computed(() => (comicBySlug.value?.comic?.status ? 'Đã hoàn thành' : 'Đang tiến hành'));
 
-const urlImage = computed(() => comicBySlug?.comic?.image);
+const urlImage = computed(() => comicBySlug.value?.comic?.image);
 
-const data = computed(() => comicBySlug?.comic?.chapters);
+const data = computed(() => comicBySlug.value?.comic?.chapters);
 
 const handleRowClick = (row: any) => {
     const numberChapters = row.title.split(' ')[1];

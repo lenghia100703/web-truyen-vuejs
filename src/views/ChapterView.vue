@@ -39,12 +39,17 @@
                                 </svg>
                             </router-link>
                             <!-- icon left  -->
-                            <span>
+                            <el-link
+                                style="padding: 0"
+                                :href="`/truyen-tranh/${slug}/chap-${preChapter}`"
+                                :disabled="preChapter <= 0"
+                                :underline="false"
+                            >
                                 <svg
                                     viewBox="0 0 1024 1024"
                                     xmlns="http://www.w3.org/2000/svg"
                                     data-v-ea893728=""
-                                    style="width: 40px"
+                                    width="40px"
                                 >
                                     <path
                                         fill="currentColor"
@@ -55,9 +60,14 @@
                                         d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
                                     ></path>
                                 </svg>
-                            </span>
+                            </el-link>
                             <!-- thanh select  -->
-                            <el-select class="m-2" placeholder="Select" size="large">
+                            <el-select
+                                class="m-2"
+                                placeholder="Chọn chương truyện"
+                                size="large"
+                                @change="handleChangeOption"
+                            >
                                 <el-option
                                     v-for="(item, index) in options"
                                     :key="index"
@@ -66,7 +76,12 @@
                                 />
                             </el-select>
                             <!-- icon right  -->
-                            <span>
+                            <el-link
+                                style="padding: 0"
+                                :href="`/truyen-tranh/${slug}/chap-${nextChapter}`"
+                                :disabled="nextChapter > options.length"
+                                :underline="false"
+                            >
                                 <svg
                                     viewBox="0 0 1024 1024"
                                     xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +93,7 @@
                                         d="M754.752 480H160a32 32 0 1 0 0 64h594.752L521.344 777.344a32 32 0 0 0 45.312 45.312l288-288a32 32 0 0 0 0-45.312l-288-288a32 32 0 1 0-45.312 45.312L754.752 480z"
                                     ></path>
                                 </svg>
-                            </span>
+                            </el-link>
                             <!-- nut theo doi -->
                             <el-button type="success">Theo dõi</el-button>
                         </div>
@@ -97,9 +112,10 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
+import router from '@/router';
 
 export interface ChapterDetail {
     title: string;
@@ -121,30 +137,49 @@ interface SelectChapter {
 const route = useRoute();
 const slug = route.params.slug;
 const numberChapter = (route.params.titleChapter as string).split('-')[1];
+const preChapter = parseInt(numberChapter) - 1;
+const nextChapter = parseInt(numberChapter) + 1;
 
 const chapter = ref<Chapter | null>(null);
 
-onMounted(async () => {
+const getChapter = async () => {
     try {
         const res = await axios.get(`/chapter/${slug}/${numberChapter}`);
         chapter.value = res.data;
     } catch (error) {
         console.error('Get Chapter Failed: ' + error);
     }
+};
+
+onMounted(() => {
+    getChapter();
 });
 
 const currentChapter = computed(() => chapter?.value?.chapterDetail);
 const url = computed(() => `/truyen-tranh/${slug}`);
 const options = computed(() => {
     const newArr: SelectChapter[] = []; // eslint-disable-next-line
-    chapter?.value?.chapters?.map((chapter: ChapterDetail) =>
+    chapter?.value?.chapters?.map((chapter: ChapterDetail, index: number) =>
         newArr.push({
             label: chapter.title,
-            value: numberChapter,
+            value: `/truyen-tranh/${slug}/chap-${index + 1}`,
         }),
     );
     return newArr;
 });
+
+const handleChangeOption = (e: Event) => {
+    window.location.href = e as unknown as string;
+};
+
+watch(
+    () => route.params,
+    (newParams, oldParams) => {
+        if (newParams.slug !== oldParams.slug || newParams.titleChapter !== oldParams.titleChapter) {
+            getChapter();
+        }
+    },
+);
 </script>
 
 <style scoped>
