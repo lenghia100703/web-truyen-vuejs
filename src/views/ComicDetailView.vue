@@ -34,8 +34,13 @@
                     </el-form-item>
                 </el-form>
                 <span>
+<<<<<<< HEAD
                     <el-button :type='type'>{{ isFollowed ? 'Theo dõi' : 'Hủy theo dõi' }}</el-button>
                     <span class='follow-text'>{{ comicBySlug?.comic?.followCount }} Lượt theo dõi</span>
+=======
+                    <el-button :type="type">{{ isFollowed ? 'Theo dõi' : 'Hủy theo dõi' }}</el-button>
+                    <span style="margin-left: 8px">{{ comicBySlug?.comic?.followCount }} Lượt theo dõi</span>
+>>>>>>> origin/master
                 </span>
             </el-col>
         </el-row>
@@ -83,12 +88,19 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router';
 import { computed, onMounted, ref } from 'vue';
+<<<<<<< HEAD
 import router from '@/router/index';
 import type { UserInfo } from '@/stores/useAuthStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { UserServices } from '@/services/user/UserServices';
 import { ComicServices } from '@/services/comic/ComicServices';
 import { CategoryServices } from '@/services/category/CategoryServices';
+=======
+import axios from 'axios';
+import router from '@/router/index';
+import type { UserInfo } from '../stores/useAuthStore';
+import { useAuthStore } from '../stores/useAuthStore';
+>>>>>>> origin/master
 import { createAxiosJwt } from '@/utils/createInstance';
 
 export interface Comic {
@@ -150,7 +162,11 @@ const comicBySlug = ref<ComicBySlug | null>({
 });
 const category = ref<Category | null>(null);
 const authStore = useAuthStore();
+<<<<<<< HEAD
 const httpJwt = createAxiosJwt(authStore.userInfo);
+=======
+const axiosJwt = createAxiosJwt(authStore.userInfo);
+>>>>>>> origin/master
 const isFollowed = computed({
     get() {
         if (comicBySlug.value?.comic._id) {
@@ -173,7 +189,15 @@ const type = computed(() => {
 
 const handleFollow = async () => {
     try {
+<<<<<<< HEAD
         await UserServices.unFollow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
+=======
+        await axiosJwt.put(`/user/follow/${comicBySlug.value?.comic._id}`, {
+            headers: {
+                token: `Bearer ${authStore.userInfo?.accessToken}`,
+            },
+        });
+>>>>>>> origin/master
         isFollowed.value = true;
     } catch (error) {
         console.error('Failed to follow' + error);
@@ -182,7 +206,15 @@ const handleFollow = async () => {
 
 const handleUnFollow = async () => {
     try {
+<<<<<<< HEAD
         await UserServices.follow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
+=======
+        await axiosJwt.put(`/user/unfollow/${comicBySlug.value?.comic._id}`, {
+            headers: {
+                token: `Bearer ${authStore.userInfo?.accessToken}`,
+            },
+        });
+>>>>>>> origin/master
         isFollowed.value = false;
     } catch (error) {
         console.error('Failed to follow' + error);
@@ -191,10 +223,17 @@ const handleUnFollow = async () => {
 
 onMounted(async () => {
     try {
+<<<<<<< HEAD
         const res = await ComicServices.getComicBySlug(slug);
         const cate = await CategoryServices.getCategoryById(res.comic.category);
         comicBySlug.value = res;
         category.value = cate;
+=======
+        const res = await axios.get(`/comic/slug/${slug}`);
+        const cate = await axios.get(`/category/${res.data.comic.category}`);
+        comicBySlug.value = res.data;
+        category.value = cate.data;
+>>>>>>> origin/master
     } catch (error) {
         console.error('Get Comic By Slug Failed: ' + error);
     }
@@ -204,7 +243,11 @@ const status = computed(() => (comicBySlug.value?.comic?.status ? 'Đã hoàn th
 
 const urlImage = computed(() => comicBySlug.value?.comic?.image);
 
+<<<<<<< HEAD
 const data = computed(() => comicBySlug.value?.comic?.chapters.reverse());
+=======
+const data = computed(() => comicBySlug.value?.comic?.chapters);
+>>>>>>> origin/master
 
 const handleRowClick = (row: any) => {
     const numberChapters = row.title.split(' ')[1];

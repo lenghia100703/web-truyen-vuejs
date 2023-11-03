@@ -15,10 +15,16 @@
                     >Sửa
                     </el-button
                     >
+<<<<<<< HEAD
                     <el-button type='danger' size='small' @click='openDeleteDialog(scope.row)' plain>Xóa</el-button>
                     <el-button type='primary' size='small' @click='chapterRef?.openModal(scope.row)' plain
                     >Đăng chương
                     </el-button
+=======
+                    <el-button type="danger" size="small" @click="openDeleteDialog(scope.row)" plain>Xóa</el-button>
+                    <el-button type="primary" size="small" @click="chapterRef?.openModal(scope.row)" plain
+                        >Đăng chương</el-button
+>>>>>>> origin/master
                     >
                 </template>
             </el-table-column>
@@ -35,16 +41,26 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <el-dialog v-model='deleteVisible' title='Xóa truyện' width='50%'>
         <span class='dialog-header' >Bạn có muốn xóa truyện này không ?</span>
         <template #footer>
             <span class='dialog-footer'>
                 <el-button @click='deleteVisible = false'>Hủy bỏ</el-button>
                 <el-button type='primary' @click='handleDelete'> Đồng ý </el-button>
+=======
+    <el-dialog v-model="deleteVisible" title="Xóa truyện" width="50%">
+        <span style="font-size: 18px">Bạn có muốn xóa truyện này không ?</span>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="deleteVisible = false">Hủy bỏ</el-button>
+                <el-button type="primary" @click="handleDelete"> Đồng ý </el-button>
+>>>>>>> origin/master
             </span>
         </template>
     </el-dialog>
 
+<<<<<<< HEAD
     <PostModal ref='postRef' />
     <ChapterModal ref='chapterRef' />
     <UpdateModal ref='updateRef' :tableData='tableData' />
@@ -52,6 +68,16 @@
 
 <script lang='ts' setup>
 import { onMounted, reactive, ref } from 'vue';
+=======
+    <PostModal ref="postRef" />
+    <ChapterModal ref="chapterRef" />
+    <UpdateModal ref="updateRef" :tableData="tableData" />
+</template>
+
+<script lang="ts" setup>
+import { onMounted, reactive, ref } from 'vue';
+import { createAxiosJwt } from '@/utils/createInstance';
+>>>>>>> origin/master
 import { useAuthStore } from '@/stores/useAuthStore';
 import type { Comic } from '@/views/ComicDetailView.vue';
 import type { UserInfo } from '@/stores/useAuthStore';

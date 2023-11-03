@@ -40,6 +40,7 @@
                             </router-link>
                             <!-- icon left  -->
                             <el-link
+<<<<<<< HEAD
 
                                 :href='`/truyen-tranh/${slug}/chap-${preChapter}`'
                                 :disabled='preChapter <= 0'
@@ -50,6 +51,18 @@
                                     xmlns='http://www.w3.org/2000/svg'
                                     data-v-ea893728=''
                                     class='icon'
+=======
+                                style="padding: 0"
+                                :href="`/truyen-tranh/${slug}/chap-${preChapter}`"
+                                :disabled="preChapter <= 0"
+                                :underline="false"
+                            >
+                                <svg
+                                    viewBox="0 0 1024 1024"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    data-v-ea893728=""
+                                    width="40px"
+>>>>>>> origin/master
                                 >
                                     <path
                                         fill='currentColor'
@@ -63,10 +76,17 @@
                             </el-link>
                             <!-- thanh select  -->
                             <el-select
+<<<<<<< HEAD
                                 class='m-2'
                                 placeholder='Chọn chương truyện'
                                 size='large'
                                 @change='handleChangeOption'
+=======
+                                class="m-2"
+                                placeholder="Chọn chương truyện"
+                                size="large"
+                                @change="handleChangeOption"
+>>>>>>> origin/master
                             >
                                 <el-option
                                     v-for='(item, index) in options'
@@ -77,9 +97,16 @@
                             </el-select>
                             <!-- icon right  -->
                             <el-link
+<<<<<<< HEAD
                                 :href='`/truyen-tranh/${slug}/chap-${nextChapter}`'
                                 :disabled='nextChapter > options.length'
                                 :underline='false'
+=======
+                                style="padding: 0"
+                                :href="`/truyen-tranh/${slug}/chap-${nextChapter}`"
+                                :disabled="nextChapter > options.length"
+                                :underline="false"
+>>>>>>> origin/master
                             >
                                 <svg
                                     viewBox='0 0 1024 1024'
@@ -110,10 +137,18 @@
     </div>
 </template>
 
+<<<<<<< HEAD
 <script lang='ts' setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { ChapterServices } from '@/services/chapter/ChapterServices';
+=======
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import router from '@/router';
+>>>>>>> origin/master
 
 export interface ChapterDetail {
     title: string;
