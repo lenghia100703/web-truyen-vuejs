@@ -29,7 +29,7 @@
     <div class="search-results" v-if="searchResults.length > 0 && showSearchResults">
         <ul>
             <li v-for="(result, index) in searchResults" :key="index" @click="handleFocusLi">
-                <router-link :to="`/truyen-tranh/${result.slug}`" class="item-container">
+                <a :href="`/truyen-tranh/${result.slug}`" class="item-container">
                     <div class="item-container-left">
                         <img :src="result.image" :alt="result.name" class="img-item" />
                     </div>
@@ -37,7 +37,7 @@
                         <h6 class="name-item">{{ result.name }}</h6>
                         <span class="category-item">Số lượng chapter: {{ result.chapters.length }}</span>
                     </div>
-                </router-link>
+                </a>
             </li>
         </ul>
     </div>
@@ -192,5 +192,29 @@ input {
 
 .category-item {
     font-size: small;
+}
+
+@media only screen and (max-width: 992px) {
+    .form-search {
+        width: 100%;
+    }
+
+    .search-btn {
+        width: 10%;
+    }
+
+    input {
+        width: 90%;
+    }
+
+    .search-results {
+        width: 100%;
+        z-index: 12;
+    }
+
+    .item-container {
+        width: 100%;
+        max-width: 100%;
+    }
 }
 </style>

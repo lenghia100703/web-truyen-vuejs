@@ -1,12 +1,12 @@
 <template>
-    <div class='container'>
-        <el-row justify='center'>
-            <el-col :span='10'>
-                <h2 class='title'>Đăng ký</h2>
-                <el-form label-position='top' :model='registerForm' ref='registerFormRef'>
+    <div class="container">
+        <el-row justify="center">
+            <el-col :xs="18" :sm="16" :md="14" :lg="10">
+                <h2 class="title">Đăng ký</h2>
+                <el-form label-position="top" :model="registerForm" ref="registerFormRef">
                     <el-form-item
-                        label='Tên người dùng'
-                        prop='username'
+                        label="Tên người dùng"
+                        prop="username"
                         :rules="[
                             {
                                 required: true,
@@ -15,11 +15,11 @@
                             },
                         ]"
                     >
-                        <el-input v-model='registerForm.username' type='text' />
+                        <el-input v-model="registerForm.username" type="text" />
                     </el-form-item>
                     <el-form-item
-                        label='Email'
-                        prop='email'
+                        label="Email"
+                        prop="email"
                         :rules="[
                             {
                                 required: true,
@@ -33,11 +33,11 @@
                             },
                         ]"
                     >
-                        <el-input v-model='registerForm.email' type='email' />
+                        <el-input v-model="registerForm.email" type="email" />
                     </el-form-item>
                     <el-form-item
-                        label='Mật khẩu'
-                        prop='password'
+                        label="Mật khẩu"
+                        prop="password"
                         :rules="[
                             {
                                 required: true,
@@ -46,23 +46,22 @@
                             },
                         ]"
                     >
-                        <el-input v-model='registerForm.password' type='password' />
+                        <el-input v-model="registerForm.password" type="password" />
                     </el-form-item>
-                    <el-button class='btn-submit' type='primary' @click='submitForm(registerFormRef)'
-                    >Đăng ký
-                    </el-button
-                    >
+                    <el-button class="btn-submit" type="primary" @click="submitForm(registerFormRef)"
+                        >Đăng ký
+                    </el-button>
                 </el-form>
                 <span>
                     Bạn đã có tài khoản?
-                    <router-link to='/dang-nhap'>Đăng nhập</router-link>
+                    <router-link to="/dang-nhap">Đăng nhập</router-link>
                 </span>
             </el-col>
         </el-row>
     </div>
 </template>
 
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { reactive, ref } from 'vue';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import router from '@/router/index';

@@ -24,7 +24,6 @@ const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
 }
 
 .image {
-    height: 300px;
 }
 
 .name-comic {
@@ -33,5 +32,11 @@ const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
     display: block;
     width: 100%;
     word-break: break-word;
+}
+
+@media only screen and (max-width: 576px) {
+    /* .card-item {
+        width: 45%;
+    } */
 }
 </style>

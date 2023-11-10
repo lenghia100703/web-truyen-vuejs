@@ -8,11 +8,11 @@
             </el-col>
         </el-row>
         <el-row justify="center">
-            <el-col :span="5">
+            <el-col :xs="11" :sm="9" :md="7" :lg="5">
                 <el-image class="image" :src="urlImage" fit="cover" />
             </el-col>
-            <el-col :span="16">
-                <el-form label-position="left" label-width="150px">
+            <el-col :xs="10" :sm="12" :md="14" :lg="16">
+                <el-form label-position="left" label-width="100px">
                     <el-form-item label="Tên tác giả" class="form-item">
                         {{ comicBySlug?.author?.username }}
                     </el-form-item>
@@ -170,6 +170,7 @@ const toggleCollapse = () => {
 
 .form-item {
     margin-bottom: 12px;
+    width: auto;
 }
 
 .follow-text {

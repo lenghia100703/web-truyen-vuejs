@@ -6,6 +6,10 @@ export const ComicServices = {
         return (await http.get(ComicAPI.LIST_BY_PAGE(page))).data;
     },
 
+    getHotComic: async (page: any) => {
+        return (await http.get(ComicAPI.LIST_HOT(page))).data;
+    },
+
     getComicById: async (comicId: any, user: any, httpJwt: any) => {
         const res = (
             await httpJwt.get(ComicAPI.COMIC_BY_ID(comicId), {

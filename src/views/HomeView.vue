@@ -26,7 +26,7 @@ import { computed, onMounted, ref } from 'vue';
 
 const comicStore = useComicStore();
 onMounted(() => {
-    comicStore.getAllComics(currentPage);
+    comicStore.getAllComics(currentPage.value);
 });
 const comicsData = computed(() => comicStore.comics);
 const currentPage = ref(1);
@@ -59,5 +59,17 @@ const handleCurrentChange = async (val: number) => {
     left: 50%;
     transform: translateX(-50%);
     bottom: 0;
+}
+
+@media only screen and (max-width: 576px) {
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* .card-list {
+        width: 120%;
+    } */
 }
 </style>

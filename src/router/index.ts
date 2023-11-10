@@ -17,6 +17,15 @@ const router = createRouter({
                     },
                 },
                 {
+                    path: 'hot',
+                    component: () => import('@/views/HotView.vue'),
+                    name: 'hot',
+                    meta: {
+                        adminRole: false,
+                        requiresAuth: false,
+                    },
+                },
+                {
                     path: 'dang-nhap',
                     component: () => import('@/views/LoginView.vue'),
                     name: 'login',

@@ -1,5 +1,14 @@
 <template>
     <div class="container">
+        <div class="page-header">
+            <span class="title">
+                <span>Thể loại: </span>
+                <h1>{{ categoryName }}</h1>
+            </span>
+            <span class="description">
+                {{ categoryDescription }}
+            </span>
+        </div>
         <div class="card-list">
             <div v-for="comicData in comicsData" :key="comicData._id">
                 <Card :data="comicData" />
@@ -31,6 +40,8 @@ import type { Comic } from '@/interfaces';
 const route = useRoute();
 const comicStore = useComicStore();
 const categorySlug = computed(() => route.params.category);
+const categoryName = ref<string>('');
+const categoryDescription = ref<string>('');
 const comicsData = ref<Comic[]>([]);
 
 const currentPage = ref(1);
@@ -50,9 +61,13 @@ onMounted(async () => {
         if (categorySlug.value === 'tat-ca') {
             await comicStore.getAllComics(currentPage);
             comicsData.value = comicStore.comics;
+            categoryName.value = 'Tất cả';
+            categoryDescription.value = 'Tất cả thể loại truyện tranh';
         } else {
             const cate = await CategoryServices.getCategoryBySlug(categorySlug.value);
             comicsData.value = await ComicServices.getComicByCategory(cate[0]._id);
+            categoryName.value = cate[0].name;
+            categoryDescription.value = cate[0].description;
         }
     } catch (error) {
         console.error('Failed to load category' + error);
@@ -64,6 +79,27 @@ onMounted(async () => {
 .container {
     position: relative;
     height: auto;
+}
+
+.page-header {
+    margin-bottom: 25px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.description {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+span + h1 {
+    margin-left: 8px;
 }
 
 .card-list {
