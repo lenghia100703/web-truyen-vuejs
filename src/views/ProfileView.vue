@@ -1,28 +1,26 @@
 <template>
-    <div class='container'>
-        <el-row justify='center'>
-            <el-col :span='24'>
-                <div class='profile-info'>
-                    <el-form :model='userInfoForm' label-position='top' class='info-form'>
-                        <el-row gutter='40' justify='space-around'>
-                            <el-col :span='8'
-                            >
-                                <el-form-item class='avatar-uploader'>
+    <div class="container">
+        <el-row justify="center">
+            <el-col :span="24">
+                <div class="profile-info">
+                    <el-form :model="userInfoForm" label-position="top" class="info-form">
+                        <el-row :gutter="40" justify="space-around">
+                            <el-col :span="8">
+                                <el-form-item class="avatar-uploader">
                                     <input
-                                        type='file'
-                                        class='avatar-input'
-                                        ref='avatarInput'
-                                        @change='handleChangeAvatar'
+                                        type="file"
+                                        class="avatar-input"
+                                        ref="avatarInput"
+                                        @change="handleChangeAvatar"
                                     />
-                                    <img v-if='imageUrl' :src='imageUrl' class='avatar' />
+                                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                                 </el-form-item>
                                 <h1>Hồ sơ cá nhân</h1></el-col
                             >
-                            <el-col :span='12'
-                            >
+                            <el-col :span="12">
                                 <el-form-item
-                                    label='Họ tên:'
-                                    prop='username'
+                                    label="Họ tên:"
+                                    prop="username"
                                     :rules="[
                                         {
                                             required: true,
@@ -31,11 +29,11 @@
                                         },
                                     ]"
                                 >
-                                    <el-input v-model='username' type='text' />
+                                    <el-input v-model="username" type="text" />
                                 </el-form-item>
                                 <el-form-item
-                                    label='Email:'
-                                    prop='email'
+                                    label="Email:"
+                                    prop="email"
                                     :rules="[
                                         {
                                             required: true,
@@ -49,22 +47,20 @@
                                         },
                                     ]"
                                 >
-                                    <el-input v-model='email' type='email' />
+                                    <el-input v-model="email" type="email" />
                                 </el-form-item>
-                                <el-form-item label='Vai trò:' prop='role'>
-                                    <el-input v-model='role' disabled='true' />
+                                <el-form-item label="Vai trò:" prop="role">
+                                    <el-input v-model="role" :disabled="true" />
                                 </el-form-item>
-                                <el-form-item label='Số điện thoại:' prop='phone'>
-                                    <el-input v-model='phone' type='text' />
+                                <el-form-item label="Số điện thoại:" prop="phone">
+                                    <el-input v-model="phone" type="text" />
                                 </el-form-item>
-                                <el-form-item label='Địa chỉ:' prop='address'>
-                                    <el-input v-model='address' type='text' />
+                                <el-form-item label="Địa chỉ:" prop="address">
+                                    <el-input v-model="address" type="text" />
                                 </el-form-item>
-                                <el-form-item
-                                >
-                                    <el-button type='primary' @click='handleSubmit'>Lưu lại</el-button>
-                                </el-form-item
-                                >
+                                <el-form-item>
+                                    <el-button type="primary" @click="handleSubmit">Lưu lại</el-button>
+                                </el-form-item>
                             </el-col>
                         </el-row>
                     </el-form>
@@ -74,18 +70,18 @@
     </div>
 </template>
 
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { UserInfo } from '@/stores/useAuthStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { UserServices } from '@/services/user/UserServices';
 import { createAxiosJwt } from '@/utils/createInstance';
+import type { UserInfo } from '@/interfaces';
 
 const authStore = useAuthStore();
-const httpJwt = createAxiosJwt(authStore.userInfo)
+const httpJwt = createAxiosJwt(authStore.userInfo);
 
 const imageUrl: string | undefined = authStore.userInfo?.avatar;
 
@@ -164,7 +160,7 @@ const handleSubmit = async () => {
             type: 'success',
         });
         if (user.value !== null) {
-            await authStore.logout(user.value);
+            authStore.logout(user.value, httpJwt);
             await router.push({ name: 'login' });
         }
         // console.log(formData);

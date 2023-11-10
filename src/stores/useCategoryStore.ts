@@ -1,7 +1,6 @@
-import type { Category } from '@/views/ComicDetailView.vue';
-import axios from 'axios';
 import { defineStore } from 'pinia';
 import { CategoryServices } from '@/services/category/CategoryServices';
+import type { Category } from '@/interfaces';
 
 interface CategoryState {
     categories: Category[];

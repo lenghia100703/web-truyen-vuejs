@@ -1,20 +1,6 @@
 import { defineStore } from 'pinia';
-import axios from 'axios';
 import { AuthServices } from '@/services/auth/AuthServices';
-
-
-export interface UserInfo {
-    _id: string;
-    admin: boolean;
-    username: string;
-    accessToken: string;
-    refreshToken: string;
-    followComic: string[];
-    address: string;
-    avatar: string;
-    phone: string;
-    email: string;
-}
+import type { UserInfo } from '@/interfaces';
 
 interface AuthState {
     isLoggedIn: boolean;
@@ -23,7 +9,6 @@ interface AuthState {
 
 const loggedInData = localStorage.getItem('isLoggedIn');
 const userInfoData = localStorage.getItem('userInfo');
-
 
 const isLoggedIn: boolean = loggedInData ? JSON.parse(loggedInData) : false;
 const userInfo: UserInfo | null = userInfoData ? JSON.parse(userInfoData) : null;
@@ -48,18 +33,17 @@ export const useAuthStore = defineStore({
         },
 
         logout(user: any, httpJwt: any) {
-
-            AuthServices.logout(user, httpJwt).then(res => {
-                this.isLoggedIn = false;
-                this.userInfo = null;
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('userInfo');
-                console.log('logout successful');
-            }).catch((error) => {
-                console.error("Fail " + error)
-            })
-
-
+            AuthServices.logout(user, httpJwt)
+                .then((res) => {
+                    this.isLoggedIn = false;
+                    this.userInfo = null;
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userInfo');
+                    console.log('logout successful');
+                })
+                .catch((error) => {
+                    console.error('Fail ' + error);
+                });
         },
     },
 });

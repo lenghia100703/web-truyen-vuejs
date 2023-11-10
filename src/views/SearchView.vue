@@ -10,13 +10,13 @@
 import Card from '@/components/Card.vue';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import type { Comic } from '@/views/ComicDetailView.vue';
 import { ComicServices } from '@/services/comic/ComicServices';
+import type { Comic } from '@/interfaces';
 
 const route = useRoute();
 console.log(route.params.searchText);
 const searchText = route.params.searchText;
-const comicsData = ref<Comic[]>();
+const comicsData = ref<Comic[] | null>(null);
 onMounted(async () => {
     try {
         const res = await ComicServices.getComicByName(searchText);

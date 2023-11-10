@@ -2,16 +2,18 @@ import { http } from '@/utils/http';
 import { ComicAPI } from '@/api/ComicAPI';
 
 export const ComicServices = {
-    getAll: async () => {
-        return (await http.get(ComicAPI.LIST)).data;
+    getComicByPage: async (page: any) => {
+        return (await http.get(ComicAPI.LIST_BY_PAGE(page))).data;
     },
 
     getComicById: async (comicId: any, user: any, httpJwt: any) => {
-        const res = (await httpJwt.get(ComicAPI.COMIC_BY_ID(comicId), {
-            headers: {
-                token: `Bearer ${user?.accessToken}`,
-            },
-        })).data;
+        const res = (
+            await httpJwt.get(ComicAPI.COMIC_BY_ID(comicId), {
+                headers: {
+                    token: `Bearer ${user?.accessToken}`,
+                },
+            })
+        ).data;
         return res;
     },
 
@@ -24,11 +26,13 @@ export const ComicServices = {
     },
 
     getComicByUserFollowed: async (user: any, httpJwt: any) => {
-        const res = (await httpJwt.get(ComicAPI.LIST_BY_USER_FOLLOWED(user?._id), {
-            headers: {
-                token: `Bearer ${user?.accessToken}`,
-            },
-        })).data;
+        const res = (
+            await httpJwt.get(ComicAPI.LIST_BY_USER_FOLLOWED(user?._id), {
+                headers: {
+                    token: `Bearer ${user?.accessToken}`,
+                },
+            })
+        ).data;
         return res;
     },
 
