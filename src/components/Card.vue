@@ -1,7 +1,7 @@
 <template>
     <div class="card-item">
         <el-card :body-style="{ padding: '0px' }" shadow="hover">
-            <img :src="data.image" alt="avatar" class="image" />
+            <el-image class="image" fit="cover" :src="data.image" />
             <span class="name-comic">
                 <router-link :to="slug">{{ data.name }}</router-link>
             </span>
@@ -9,10 +9,10 @@
     </div>
 </template>
 <script lang="ts" setup>
-import {  computed } from 'vue';
+import { computed } from 'vue';
 const props = defineProps<{
-    data: any
-}>()
+    data: any;
+}>();
 const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
 </script>
 
@@ -24,7 +24,7 @@ const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
 }
 
 .image {
-    width: 100%;
+    height: 300px;
 }
 
 .name-comic {

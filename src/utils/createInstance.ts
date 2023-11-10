@@ -1,15 +1,20 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import { useAuthStore, type UserInfo } from '@/stores/useAuthStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { http } from '@/utils/http';
+import type { UserInfo } from '@/interfaces';
 
 const authStore = useAuthStore();
 
-const refreshToken = async () => {
+export const refreshToken = async () => {
     try {
-        const res = await http.post('/auth/refresh', {}, {
-            withCredentials: true,
-        });
+        const res = await http.post(
+            '/auth/refresh',
+            {},
+            {
+                withCredentials: true,
+            },
+        );
         return res.data;
     } catch (err) {
         console.log(err);

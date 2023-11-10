@@ -66,7 +66,7 @@
         </el-row>
         <el-row justify="center">
             <el-col :span="21">
-                <el-table :data="data" @row-click="handleRowClick">
+                <el-table :data="data" @row-click="handleRowClick" empty-text="Chưa đăng chương truyện nào">
                     <el-table-column label="Số chương" prop="title"></el-table-column>
                     <el-table-column label="Ngày đăng" prop="time"></el-table-column>
                     <el-table-column label="Lượt xem" prop="view"></el-table-column>
@@ -97,7 +97,7 @@ const slug = route.params.slug;
 const comicBySlug = ref<ComicBySlug | null>(null);
 const category = ref<Category | null>(null);
 const authStore = useAuthStore();
-const httpJwt = createAxiosJwt(authStore.userInfo);
+const httpJwt: any = createAxiosJwt(authStore.userInfo);
 
 const isFollowed = ref<boolean>(true);
 
@@ -107,6 +107,7 @@ const handleFollow = async () => {
     try {
         await UserServices.follow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
         followCount.value += 1;
+        window.location.reload();
     } catch (error) {
         console.error('Failed to follow' + error);
     }
@@ -116,6 +117,7 @@ const handleUnFollow = async () => {
     try {
         await UserServices.unFollow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
         followCount.value -= 1;
+        window.location.reload();
     } catch (error) {
         console.error('Failed to follow' + error);
     }
@@ -128,8 +130,6 @@ onMounted(async () => {
         comicBySlug.value = res;
         followCount.value = res.comic?.followCount;
         category.value = cate;
-
-        console.log(authStore.userInfo?.followComic.includes(res.comic._id) as boolean);
         if (authStore.userInfo?.followComic.includes(res.comic._id) as boolean) {
             isFollowed.value = true;
         } else {

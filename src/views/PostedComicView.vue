@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <el-table :data="tableData" class="table-container">
+        <el-table :data="tableData" class="table-container" empty-text="Chưa đăng truyện nào">
             <el-table-column prop="stt" label="STT" />
             <el-table-column prop="name" label="Tên truyện" width="300">
                 <template v-slot="scope">
