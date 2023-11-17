@@ -1,14 +1,14 @@
 <template>
-    <el-aside>
+    <el-aside class='hidden-sm-and-down'>
         <el-table :data="tableData">
             <el-table-column>
                 <template v-slot="scope">
-                    <a :href="`/the-loai/${validate(scope.row.column1)}`">{{ scope.row.column1 }}</a>
+                    <router-link :to="`/the-loai/truyen-tranh/${validate(scope.row.column1)}`">{{ scope.row.column1 }}</router-link>
                 </template>
             </el-table-column>
             <el-table-column>
                 <template v-slot="scope">
-                    <a :href="`/the-loai/${validate(scope.row.column2)}`">{{ scope.row.column2 }}</a>
+                    <router-link :to="`/the-loai/truyen-tranh/${validate(scope.row.column2)}`">{{ scope.row.column2 }}</router-link>
                 </template>
             </el-table-column>
         </el-table>

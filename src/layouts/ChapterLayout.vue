@@ -14,9 +14,6 @@ import Header from '@/components/Header.vue';
 </script>
 
 <style scoped>
-.common-layout {
-}
-
 #main {
     display: flex;
     justify-content: center;

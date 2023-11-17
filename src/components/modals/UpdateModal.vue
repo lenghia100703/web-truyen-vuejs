@@ -14,7 +14,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="visible = false">Huỷ bỏ</el-button>
-                <el-button type="primary" @click="handleUpdate"> Xác nhận </el-button>
+                <el-button type="primary" :loading='updateLoading' @click="handleUpdate"> Xác nhận </el-button>
             </span>
         </template>
     </el-dialog>
@@ -33,6 +33,7 @@ const props = defineProps<{
 }>();
 
 const visible = ref<boolean>(false);
+const updateLoading = ref<boolean>(false)
 const updateForm = ref<Comic | null>(null);
 const _id = ref<string>('');
 const name = ref<string>('');
@@ -54,6 +55,7 @@ const handleUpdate = async () => {
         slug: slug.value,
     };
     try {
+        updateLoading.value = true
         const res = await PostedComicServices.update(_id.value, authStore.userInfo, data, httpJwt);
         const index = props.tableData.findIndex((item: any) => item._id === _id.value);
         if (index !== -1) {

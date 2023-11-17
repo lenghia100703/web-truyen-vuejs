@@ -21,10 +21,7 @@ import Nav from '@/components/Nav.vue';
 
 <style scoped>
 #main {
-    margin-top: 60px;
-    margin-bottom: 60px;
     max-width: 80%;
-    margin-right: auto;
-    margin-left: auto;
+    margin: 60px auto;
 }
 </style>

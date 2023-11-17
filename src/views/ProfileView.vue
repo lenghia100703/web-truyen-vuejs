@@ -1,26 +1,26 @@
 <template>
-    <div class="container">
-        <el-row justify="center">
-            <el-col :span="24">
-                <div class="profile-info">
-                    <el-form :model="userInfoForm" label-position="top" class="info-form">
-                        <el-row :gutter="40" justify="space-around">
-                            <el-col :span="8">
-                                <el-form-item class="avatar-uploader">
+    <div class='container'>
+        <el-row :justify="isMobile ? 'center' : 'start'">
+            <el-col :span='24'>
+                <div class='profile-info'>
+                    <el-form :model='userInfoForm' label-position='top' class='info-form'>
+                        <el-row :gutter='isMobile ? 0 : 40' justify='space-around'>
+                            <el-col :span='isMobile ? 24 : 8'>
+                                <el-form-item class='avatar-uploader'>
                                     <input
-                                        type="file"
-                                        class="avatar-input"
-                                        ref="avatarInput"
-                                        @change="handleChangeAvatar"
+                                        type='file'
+                                        class='avatar-input'
+                                        ref='avatarInput'
+                                        @change='handleChangeAvatar'
                                     />
-                                    <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                                    <img v-if='imageUrl' :src='imageUrl' class='avatar' alt='anh' />
                                 </el-form-item>
                                 <h1>Hồ sơ cá nhân</h1></el-col
                             >
-                            <el-col :span="12">
+                            <el-col :span='isMobile ? 18 : 12'>
                                 <el-form-item
-                                    label="Họ tên:"
-                                    prop="username"
+                                    label='Họ tên:'
+                                    prop='username'
                                     :rules="[
                                         {
                                             required: true,
@@ -29,11 +29,11 @@
                                         },
                                     ]"
                                 >
-                                    <el-input v-model="username" type="text" />
+                                    <el-input v-model='username' type='text' />
                                 </el-form-item>
                                 <el-form-item
-                                    label="Email:"
-                                    prop="email"
+                                    label='Email:'
+                                    prop='email'
                                     :rules="[
                                         {
                                             required: true,
@@ -47,19 +47,20 @@
                                         },
                                     ]"
                                 >
-                                    <el-input v-model="email" type="email" />
+                                    <el-input v-model='email' type='text' />
                                 </el-form-item>
-                                <el-form-item label="Vai trò:" prop="role">
-                                    <el-input v-model="role" :disabled="true" />
+                                <el-form-item label='Vai trò:' prop='role'>
+                                    <el-input v-model='role' :disabled='true' />
                                 </el-form-item>
-                                <el-form-item label="Số điện thoại:" prop="phone">
-                                    <el-input v-model="phone" type="text" />
+                                <el-form-item label='Số điện thoại:' prop='phone'>
+                                    <el-input v-model='phone' type='text' />
                                 </el-form-item>
-                                <el-form-item label="Địa chỉ:" prop="address">
-                                    <el-input v-model="address" type="text" />
+                                <el-form-item label='Địa chỉ:' prop='address'>
+                                    <el-input v-model='address' type='text' />
                                 </el-form-item>
-                                <el-form-item>
-                                    <el-button type="primary" @click="handleSubmit">Lưu lại</el-button>
+                                <el-form-item class='btn-submit'>
+                                    <el-button type='primary' :loading='submitLoading' @click='handleSubmit'>Lưu lại
+                                    </el-button>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -70,8 +71,8 @@
     </div>
 </template>
 
-<script lang="ts" setup>
-import { computed, ref } from 'vue';
+<script lang='ts' setup>
+import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import { ElMessage } from 'element-plus';
@@ -82,79 +83,44 @@ import type { UserInfo } from '@/interfaces';
 
 const authStore = useAuthStore();
 const httpJwt = createAxiosJwt(authStore.userInfo);
+const isMobile = ref<boolean>(false);
+const submitLoading = ref<boolean>(false);
 
 const imageUrl: string | undefined = authStore.userInfo?.avatar;
 
 const userInfoForm = ref<UserInfo | null>(authStore.userInfo);
 
-const username = computed({
-    get() {
-        return userInfoForm.value?.username || '';
-    },
-    set(username) {
-        if (typeof userInfoForm.value?.username === 'string') {
-            userInfoForm.value = { ...userInfoForm.value, username };
-        }
-    },
-});
-
-const email = computed({
-    get() {
-        return userInfoForm.value?.email || '';
-    },
-    set(email) {
-        if (typeof userInfoForm.value?.email === 'string') {
-            userInfoForm.value = { ...userInfoForm.value, email };
-        }
-    },
-});
-
-const phone = computed({
-    get() {
-        return userInfoForm.value?.phone || '';
-    },
-    set(phone) {
-        if (typeof userInfoForm.value?.phone === 'string') {
-            userInfoForm.value = { ...userInfoForm.value, phone };
-        }
-    },
-});
-
-const address = computed({
-    get() {
-        return userInfoForm.value?.address || '';
-    },
-    set(address) {
-        if (typeof userInfoForm.value?.address === 'string') {
-            userInfoForm.value = { ...userInfoForm.value, address };
-        }
-    },
-});
-
+const username = ref<string>(<string>userInfoForm.value?.username);
+const email = ref<string>(<string>userInfoForm.value?.email);
+const phone = ref<string>(<string>userInfoForm.value?.phone || '');
+const address = ref<string>(String(<string>userInfoForm.value?.address || ''));
 const avatar = ref<any | null>();
 const avatarInput = ref<HTMLInputElement | null>(null);
 const admin: boolean = false;
 const user = computed(() => authStore.userInfo);
-const role: string = admin ? 'Quản trị viên' : 'Người đọc truyện';
+const role: string = authStore.userInfo.admin ? 'Quản trị viên' : 'Người đọc truyện';
 
 const handleChangeAvatar = () => {
     if (avatarInput.value?.files && avatarInput.value.files[0]) {
-        const newFile = avatarInput.value.files[0];
-        avatar.value = newFile;
-        console.log(avatar.value);
+        avatar.value = avatarInput.value.files[0];
     }
 };
 
+const handleResize = () => {
+    isMobile.value = window.innerWidth <= 992;
+};
+
 const handleSubmit = async () => {
-    const formData = new FormData();
-    formData.append('username', username.value);
-    formData.append('email', email.value);
-    formData.append('phone', phone.value);
-    formData.append('address', address.value);
-    formData.append('avatar', avatar.value);
     try {
+        submitLoading.value = true;
+        const formData = new FormData();
+        formData.append('username', username.value);
+        formData.append('email', email.value);
+        formData.append('phone', phone.value);
+        formData.append('address', address.value);
+        formData.append('avatar', avatar.value);
         await UserServices.update(user.value, formData, httpJwt);
-        loadingFullScreen();
+        loadingFullScreen('Đang xử lý');
         ElMessage({
             message: 'Sửa thành công. Bạn cần đăng nhập lại.',
             type: 'success',
@@ -163,12 +129,18 @@ const handleSubmit = async () => {
             authStore.logout(user.value, httpJwt);
             await router.push({ name: 'login' });
         }
-        // console.log(formData);
     } catch (error) {
         console.error('Failed to submit' + error);
         ElMessage.error('Sửa thất bại.');
+    } finally {
+        submitLoading.value = false;
     }
 };
+
+onMounted(() => {
+    loadingFullScreen('Đang xử lý');
+    window.addEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
@@ -177,8 +149,8 @@ const handleSubmit = async () => {
 }
 
 .avatar-uploader .avatar {
-    width: 360px;
-    height: 360px;
+    width: 100%;
+    height: auto;
     display: block;
     border-radius: 50%;
     cursor: pointer;
@@ -199,5 +171,33 @@ h1 {
     cursor: pointer;
     border-radius: 50%;
     opacity: 0;
+}
+
+.btn-submit {
+    float: left !important;
+}
+
+.el-form-item__content {
+    display: flex;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 992px) {
+    .el-form-item__content {
+        justify-content: center;
+    }
+
+    .avatar-input {
+        width: 60%;
+    }
+
+    .avatar-uploader .avatar {
+        width: 60%;
+        height: auto;
+    }
+
+    .info-form {
+        max-width: 100%;
+    }
 }
 </style>

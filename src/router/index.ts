@@ -88,10 +88,37 @@ const router = createRouter({
                         requiredAuth: false,
                     },
                 },
+                {
+                    path: 'quan-ly/tai-khoan',
+                    component: () => import('@/views/ManageAccount.vue'),
+                    name: 'manage-account',
+                    meta: {
+                        adminRole: true,
+                        requiredAuth: true,
+                    },
+                },
+                {
+                    path: 'quan-ly/truyen-tranh',
+                    component: () => import('@/views/ManageComic.vue'),
+                    name: 'manage-comic',
+                    meta: {
+                        adminRole: true,
+                        requiredAuth: true,
+                    },
+                },
+                {
+                    path: 'khong-tim-thay',
+                    component: () => import('@/views/NotFoundView.vue'),
+                    name: 'not-found',
+                    meta: {
+                        adminRole: false,
+                        requiredAuth: false,
+                    },
+                }
             ],
         },
         {
-            path: '/the-loai/:category',
+            path: '/the-loai/tat-ca',
             component: () => import('@/layouts/NavLayout.vue'),
             children: [
                 {
@@ -103,6 +130,23 @@ const router = createRouter({
                         requiresAuth: false,
                     },
                 },
+
+            ],
+        },
+        {
+            path: '/the-loai/truyen-tranh/:category',
+            component: () => import('@/layouts/NavLayout.vue'),
+            children: [
+                {
+                    path: '',
+                    component: () => import('@/views/CategoryDetailView.vue'),
+                    name: 'category-detail',
+                    meta: {
+                        adminRole: false,
+                        requiresAuth: false,
+                    },
+                },
+
             ],
         },
         {

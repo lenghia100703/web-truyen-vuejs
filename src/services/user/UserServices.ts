@@ -6,9 +6,9 @@ import { refreshToken } from '@/utils/createInstance';
 const authStore = useAuthStore();
 
 export const UserServices = {
-    getAll: async (user: any) => {
+    getAll: async (user: any, httpJwt: any) => {
         return (
-            await http.get(UserAPI.LIST, {
+            await httpJwt.get(UserAPI.LIST, {
                 headers: {
                     token: `Bearer ${user.accessToken}`,
                 },
@@ -35,7 +35,7 @@ export const UserServices = {
     },
 
     follow: async (comicId: any, user: any, httpJwt: any) => {
-        const updatedUser = (
+        const res = (
             await httpJwt.put(
                 UserAPI.FOLLOW_COMIC(comicId),
                 {},
@@ -46,6 +46,9 @@ export const UserServices = {
                 },
             )
         ).data;
+
+        const updatedUser = res.updatedUser
+        console.log(res)
         const data = await refreshToken();
         const newUser = {
             ...updatedUser,
@@ -53,10 +56,11 @@ export const UserServices = {
         };
         authStore.userInfo = newUser;
         localStorage.setItem('userInfo', JSON.stringify(newUser));
+        return res
     },
 
     unFollow: async (comicId: any, user: any, httpJwt: any) => {
-        const updatedUser = (
+        const res = (
             await httpJwt.put(
                 UserAPI.UNFOLLOW_COMIC(comicId),
                 {},
@@ -67,6 +71,7 @@ export const UserServices = {
                 },
             )
         ).data;
+        const updatedUser = res.updatedUser
 
         const data = await refreshToken();
         const newUser = {
@@ -75,5 +80,6 @@ export const UserServices = {
         };
         authStore.userInfo = newUser;
         localStorage.setItem('userInfo', JSON.stringify(newUser));
+        return res
     },
 };

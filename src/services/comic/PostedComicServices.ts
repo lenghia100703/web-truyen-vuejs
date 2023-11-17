@@ -1,4 +1,3 @@
-import { http } from '@/utils/http';
 import { PostedComicAPI } from '@/api/PostedComicAPI';
 
 export const PostedComicServices = {
@@ -27,12 +26,11 @@ export const PostedComicServices = {
     },
 
     update: async (comicId: any, user: any, data: any, httpJwt: any) => {
-        const res = (await httpJwt.put(PostedComicAPI.UPDATE(comicId), data, {
+        return (await httpJwt.put(PostedComicAPI.UPDATE(comicId), data, {
             headers: {
                 token: `Bearer ${user?.accessToken}`,
             },
         })).data;
-        return res;
     },
 
 

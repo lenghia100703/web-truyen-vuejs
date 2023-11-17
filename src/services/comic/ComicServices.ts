@@ -11,14 +11,13 @@ export const ComicServices = {
     },
 
     getComicById: async (comicId: any, user: any, httpJwt: any) => {
-        const res = (
+        return (
             await httpJwt.get(ComicAPI.COMIC_BY_ID(comicId), {
                 headers: {
                     token: `Bearer ${user?.accessToken}`,
                 },
             })
         ).data;
-        return res;
     },
 
     getComicBySlug: async (slug: any) => {
@@ -30,14 +29,13 @@ export const ComicServices = {
     },
 
     getComicByUserFollowed: async (user: any, httpJwt: any) => {
-        const res = (
+        return (
             await httpJwt.get(ComicAPI.LIST_BY_USER_FOLLOWED(user?._id), {
                 headers: {
                     token: `Bearer ${user?.accessToken}`,
                 },
             })
         ).data;
-        return res;
     },
 
     getComicByName: async (name: any) => {

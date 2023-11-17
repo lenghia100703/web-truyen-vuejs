@@ -22,7 +22,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="visible = false">Huỷ bỏ</el-button>
-                <el-button type="primary" @click="handleCreate"> Xác nhận </el-button>
+                <el-button type="primary" :loading='postLoading' @click="handleCreate"> Xác nhận </el-button>
             </span>
         </template>
     </el-dialog>
@@ -45,6 +45,7 @@ interface Option {
 }
 
 const postForm = ref<Comic>();
+const postLoading = ref<boolean>(false)
 const visible = ref<boolean>(false);
 const categoryStore = useCategoryStore();
 const authStore = useAuthStore();
@@ -91,8 +92,9 @@ const handleCreate = async () => {
     formData.append('slug', slug.value);
     formData.append('image', image.value);
     try {
+        postLoading.value = true
         await PostedComicServices.create(formData, authStore.userInfo, httpJwt);
-        loadingFullScreen();
+        loadingFullScreen('Đang xử lý');
         ElMessage({
             message: 'Đăng truyện thành công.',
             type: 'success',

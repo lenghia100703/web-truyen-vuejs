@@ -11,7 +11,7 @@
         <template #footer>
             <span class="dialog-footer">
                 <el-button @click="visible = false">Huỷ bỏ</el-button>
-                <el-button type="primary" @click="handleUpload"> Xác nhận </el-button>
+                <el-button type="primary" :loading='chapterLoading' @click="handleUpload"> Xác nhận </el-button>
             </span>
         </template>
     </el-dialog>
@@ -28,6 +28,7 @@ const authStore = useAuthStore();
 const httpJwt = createAxiosJwt(authStore.userInfo)
 
 const visible = ref<boolean>(false);
+const chapterLoading = ref<boolean>(false)
 const imageInput = ref<HTMLInputElement | null>(null);
 const images = ref<any[]>([]);
 const uploadForm = ref<{
@@ -49,12 +50,13 @@ const openModal = (rowData: any) => {
 };
 
 const handleUpload = async () => {
-    const formData = new FormData();
-    formData.append('title', title.value);
-    images.value?.forEach((image, index) => {
-        formData.append('images', image, `image${index + 1}`);
-    });
     try {
+        chapterLoading.value = true
+        const formData = new FormData();
+        formData.append('title', title.value);
+        images.value?.forEach((image, index) => {
+            formData.append('images', image, `image${index + 1}`);
+        });
         await ChapterServices.create(formData, _id.value, authStore.userInfo, httpJwt)
         visible.value = false;
         ElMessage({

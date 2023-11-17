@@ -34,7 +34,7 @@ export const useAuthStore = defineStore({
 
         logout(user: any, httpJwt: any) {
             AuthServices.logout(user, httpJwt)
-                .then((res) => {
+                .then(() => {
                     this.isLoggedIn = false;
                     this.userInfo = null;
                     localStorage.removeItem('isLoggedIn');

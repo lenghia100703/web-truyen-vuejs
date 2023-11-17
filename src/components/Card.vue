@@ -1,15 +1,19 @@
 <template>
-    <div class="card-item">
-        <el-card :body-style="{ padding: '0px' }" shadow="hover">
-            <el-image class="image" fit="cover" :src="data.image" />
-            <span class="name-comic">
-                <router-link :to="slug">{{ data.name }}</router-link>
-            </span>
-        </el-card>
+    <div class='card-item'>
+        <router-link :to='slug'>
+            <el-card class='card-body' shadow='hover'>
+                <el-image class='image' fit='cover' :src='data.image' />
+                <span class='name-comic'>
+                {{ data.name }}
+                </span>
+            </el-card>
+        </router-link>
+
     </div>
 </template>
-<script lang="ts" setup>
+<script lang='ts' setup>
 import { computed } from 'vue';
+
 const props = defineProps<{
     data: any;
 }>();
@@ -23,15 +27,23 @@ const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
     cursor: pointer;
 }
 
+.card-body {
+    padding: 0;
+}
+
+
 .image {
+    height: 250px;
+    width: auto;
 }
 
 .name-comic {
-    padding: 4px 16px;
-    text-transform: capitalize;
-    display: block;
-    width: 100%;
-    word-break: break-word;
+    height: 50px;
+    padding: 4px 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 @media only screen and (max-width: 576px) {

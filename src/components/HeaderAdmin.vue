@@ -1,3 +1,33 @@
+<script setup lang='ts'>
+import { computed } from 'vue';
+import SearchInput from '@/components/SearchInput.vue';
+import { useAuthStore } from '@/stores/useAuthStore';
+import router from '@/router';
+import { loadingFullScreen } from '@/utils/loadingFullScreen';
+import { createAxiosJwt } from '@/utils/createInstance';
+import type { UserInfo } from '@/interfaces';
+import HeaderMobile from '@/components/HeaderMobile.vue';
+
+const handleRoute = (path: string) => {
+    router.push(path)
+}
+
+
+const authStore = useAuthStore();
+const user = computed(() => authStore.userInfo);
+const login = computed(() => authStore.isLoggedIn);
+const isAdmin = computed(() => user.value.admin)
+const httpJwt = createAxiosJwt(authStore.userInfo);
+
+const handleLogout = (user: UserInfo | null) => {
+    if (user !== null) {
+        loadingFullScreen('Đang xử lý');
+        authStore.logout(user, httpJwt);
+        router.push({ name: 'login' });
+    }
+};
+</script>
+
 <template>
     <el-header id='header' class='hidden-sm-and-down'>
         <div class='header-content'>
@@ -5,28 +35,13 @@
                 <el-menu-item class='no-hover logo' index='1' @click='handleRoute("/")'>
                     Web Truyen
                 </el-menu-item>
-                <el-menu-item class='no-hover' index='2' @click='handleRoute("/hot")'>
-                    HOT
-                </el-menu-item>
-                <el-menu-item class='no-hover' index='3' @click='handleRoute("/theo-doi")'>
-                    Theo dõi
+                <el-menu-item class='no-hover' index='3' @click='handleRoute("/quan-ly/tai-khoan")'>
+                    Quản lý người dùng
                 </el-menu-item>
 
-                <el-sub-menu class='no-hover' index='4'>
-                    <template #title>Thể loại</template>
-                    <el-menu-item index='4-1' @click='handleRoute("/the-loai/tat-ca")'>
-                        Tất cả
-                    </el-menu-item>
-                    <el-menu-item index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manga")'>
-                        Manga
-                    </el-menu-item>
-                    <el-menu-item index='4-3' @click='handleRoute("/the-loai/truyen-tranh/manhua")'>
-                        Manhua
-                    </el-menu-item>
-                    <el-menu-item index='4-4' @click='handleRoute("/the-loai/truyen-tranh/manhwa")'>
-                        Manhwa
-                    </el-menu-item>
-                </el-sub-menu>
+                <el-menu-item class='no-hover' index='4' @click='handleRoute("/quan-ly/truyen-tranh")'>
+                    Quản lý truyện
+                </el-menu-item>
                 <div class='flex-grow'></div>
                 <el-menu-item class='no-hover' >
                     <SearchInput />
@@ -43,11 +58,11 @@
                                 <el-dropdown-item @click='handleRoute("/ho-so")'>
                                     Hồ sơ cá nhân
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/theo-doi")'>
-                                    Truyện đã theo dõi
+                                <el-dropdown-item @click='handleRoute("/quan-ly/tai-khoan")'>
+                                    Quản lý người dùng
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/truyen-da-dang")' >
-                                    Truyện đã đăng
+                                <el-dropdown-item @click='handleRoute("/quan-ly/truyen-tranh")' >
+                                    Quản lý truyện
                                 </el-dropdown-item>
                                 <el-dropdown-item @click='() => handleLogout(user)'>
                                     Đăng xuất
@@ -70,41 +85,7 @@
         </div>
     </el-header>
 
-    <HeaderAdmin v-if='user?.admin' />
-
-    <HeaderMobile />
 </template>
-
-<script lang='ts' setup>
-import { computed } from 'vue';
-import SearchInput from '@/components/SearchInput.vue';
-import { useAuthStore } from '@/stores/useAuthStore';
-import router from '@/router';
-import { loadingFullScreen } from '@/utils/loadingFullScreen';
-import { createAxiosJwt } from '@/utils/createInstance';
-import type { UserInfo } from '@/interfaces';
-import HeaderMobile from '@/components/HeaderMobile.vue';
-import HeaderAdmin from '@/components/HeaderAdmin.vue';
-
-const authStore = useAuthStore();
-const user = computed(() => authStore.userInfo);
-const login = computed(() => authStore.isLoggedIn);
-const httpJwt = createAxiosJwt(authStore.userInfo);
-
-
-const handleRoute = (path: any) => {
-    router.push(path);
-};
-
-const handleLogout = (user: UserInfo | null) => {
-    if (user !== null) {
-        loadingFullScreen('Đang xử lý');
-        authStore.logout(user, httpJwt);
-        router.push({ name: 'login' });
-    }
-};
-
-</script>
 
 <style scoped>
 #header {
