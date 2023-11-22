@@ -145,7 +145,7 @@ const handleSubmit = async (data: any) => {
         });
         if (user.value !== null) {
             authStore.logout(user.value, httpJwt);
-            router.push({ name: 'login' });
+            await router.push({ name: 'login' });
         }
     } catch (error) {
         console.error('Failed to submit' + error);
