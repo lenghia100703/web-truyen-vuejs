@@ -1,5 +1,5 @@
 export const UserAPI = {
-    LIST: `/user`,
+    LIST: (page: any) => `/user?page=${page}`,
     USER_BY_ID: (userId: any) => `/user/${userId}`,
     UPDATE: (userId: any) => `/user/${userId}`,
     DELETE: (userId: any) => `/user/${userId}`,

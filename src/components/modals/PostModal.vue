@@ -138,9 +138,7 @@ const handleChangeImage = () => {
     }
 };
 
-const handleChooseCategory = () => {
-    console.log(postForm.category);
-};
+const handleChooseCategory = () => {};
 
 async function openModal() {
     visible.value = true;
@@ -158,7 +156,6 @@ const handleCreate = async (data: any) => {
         formData.append('category', data.category);
         formData.append('slug', data.slug);
         formData.append('image', data.image);
-        console.log(data);
         postLoading.value = true;
         const res = await PostedComicServices.create(formData, authStore.userInfo, httpJwt);
         visible.value = false;

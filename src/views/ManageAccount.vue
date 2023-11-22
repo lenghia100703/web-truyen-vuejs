@@ -24,16 +24,14 @@ const openDeleteDialog = (rowData: any) => {
 };
 
 const currentPage = ref(1);
-const pageSize = ref(10);
+const pageSize = ref(5);
 const totalData = ref<number>(0);
 
-const handleSizeChange = (val: number) => {
-    console.log(`${val} items per page`);
-};
+const handleSizeChange = (val: number) => {};
 const handleCurrentChange = async (val: number) => {
     try {
         tableLoading.value = true;
-        tableData.value = await UserServices.getAll(authStore.userInfo, httpJwt);
+        tableData.value = (await UserServices.getAll(authStore.userInfo, val, httpJwt)).accounts;
     } catch (e) {
         console.error('fail to get all comics ' + e);
     } finally {
@@ -66,8 +64,9 @@ onMounted(async () => {
     loadingFullScreen('Đang xử lý');
     try {
         tableLoading.value = true;
-        tableData.value = await UserServices.getAll(authStore.userInfo, httpJwt);
-        totalData.value = tableData.value.length;
+        const res = await UserServices.getAll(authStore.userInfo, currentPage, httpJwt);
+        tableData.value = res.accounts;
+        totalData.value = res.totalAccounts;
     } catch (e) {
         console.error(e);
     } finally {

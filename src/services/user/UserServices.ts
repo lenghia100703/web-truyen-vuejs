@@ -5,9 +5,9 @@ import { refreshToken } from '@/utils/createInstance';
 const authStore = useAuthStore();
 
 export const UserServices = {
-    getAll: async (user: any, httpJwt: any) => {
+    getAll: async (user: any, page: any, httpJwt: any) => {
         return (
-            await httpJwt.get(UserAPI.LIST, {
+            await httpJwt.get(UserAPI.LIST(page), {
                 headers: {
                     token: `Bearer ${user.accessToken}`,
                 },
@@ -56,7 +56,6 @@ export const UserServices = {
         ).data;
 
         const updatedUser = res.updatedUser;
-        console.log(res);
         const data = await refreshToken();
         const newUser = {
             ...updatedUser,

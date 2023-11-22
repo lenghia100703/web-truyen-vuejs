@@ -166,18 +166,9 @@ const submitForm = (formEl: typeof ElForm | null) => {
     });
 };
 
-const obj = {
-    name: 'nghia',
-    age: '18',
-};
-
 onMounted(() => {
     loadingFullScreen('Đang xử lý');
     window.addEventListener('resize', handleResize);
-    console.log({
-        ...obj,
-        name: 'asd',
-    });
 });
 </script>
 

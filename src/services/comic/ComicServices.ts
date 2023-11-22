@@ -2,7 +2,7 @@ import { http } from '@/utils/http';
 import { ComicAPI } from '@/api/ComicAPI';
 
 export const ComicServices = {
-    getComicByPage: async (page: any) => {
+    getComicByPage: async (page?: any) => {
         return (await http.get(ComicAPI.LIST_BY_PAGE(page))).data;
     },
 
