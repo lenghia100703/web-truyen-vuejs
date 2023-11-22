@@ -1,82 +1,71 @@
 <template>
-    <el-header id='header' class='hidden-sm-and-down'>
-        <div class='header-content'>
-            <el-menu class='menu' mode='horizontal' :ellipsis='false' background-color='#fff' menu-trigger='click'>
-                <el-menu-item class='no-hover logo' index='1' @click='handleRoute("/")'>
-                    Web Truyen
-                </el-menu-item>
-                <el-menu-item class='no-hover' index='2' @click='handleRoute("/hot")'>
-                    HOT
-                </el-menu-item>
-                <el-menu-item class='no-hover' index='3' @click='handleRoute("/theo-doi")'>
-                    Theo dõi
-                </el-menu-item>
+    <el-header id="header" class="hidden-sm-and-down">
+        <div class="header-content">
+            <el-menu class="menu" mode="horizontal" :ellipsis="false" background-color="#fff" menu-trigger="click">
+                <el-menu-item class="no-hover logo" index="1" @click="handleRoute('/')"> Web Truyen </el-menu-item>
+                <el-menu-item class="no-hover" index="2" @click="handleRoute('/hot')"> HOT </el-menu-item>
+                <el-menu-item class="no-hover" index="3" @click="handleRoute('/theo-doi')"> Theo dõi </el-menu-item>
 
-                <el-sub-menu class='no-hover' index='4'>
+                <el-sub-menu class="no-hover" index="4">
                     <template #title>Thể loại</template>
-                    <el-menu-item index='4-1' @click='handleRoute("/the-loai/tat-ca")'>
+                    <el-menu-item index="4-1" @click="handleRoute('/the-loai/truyen-tranh/tat-ca')">
                         Tất cả
                     </el-menu-item>
-                    <el-menu-item index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manga")'>
+                    <el-menu-item index="4-2" @click="handleRoute('/the-loai/truyen-tranh/manga')">
                         Manga
                     </el-menu-item>
-                    <el-menu-item index='4-3' @click='handleRoute("/the-loai/truyen-tranh/manhua")'>
+                    <el-menu-item index="4-3" @click="handleRoute('/the-loai/truyen-tranh/manhua')">
                         Manhua
                     </el-menu-item>
-                    <el-menu-item index='4-4' @click='handleRoute("/the-loai/truyen-tranh/manhwa")'>
+                    <el-menu-item index="4-4" @click="handleRoute('/the-loai/truyen-tranh/manhwa')">
                         Manhwa
                     </el-menu-item>
                 </el-sub-menu>
-                <div class='flex-grow'></div>
-                <el-menu-item class='no-hover' >
+                <div class="flex-grow"></div>
+                <el-menu-item class="no-hover">
                     <SearchInput />
                 </el-menu-item>
 
-                <el-menu-item class='no-hover'  v-if='login'>
+                <el-menu-item class="no-hover" v-if="login">
                     <el-dropdown>
-                        <span class='name-user'>
-                            <el-avatar :src='user?.avatar' />
-                            <span class='avatar'>{{ user?.username }}</span>
+                        <span class="name-user">
+                            <el-avatar :src="user?.avatar" />
+                            <span class="avatar">{{ user?.username }}</span>
                         </span>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click='handleRoute("/ho-so")'>
-                                    Hồ sơ cá nhân
-                                </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/theo-doi")'>
+                                <el-dropdown-item @click="handleRoute('/ho-so')"> Hồ sơ cá nhân </el-dropdown-item>
+                                <el-dropdown-item @click="handleRoute('/theo-doi')">
                                     Truyện đã theo dõi
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/truyen-da-dang")' >
+                                <el-dropdown-item @click="handleRoute('/truyen-da-dang')">
                                     Truyện đã đăng
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='() => handleLogout(user)'>
-                                    Đăng xuất
-                                </el-dropdown-item>
+                                <el-dropdown-item @click="() => handleLogout(user)"> Đăng xuất </el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
                 </el-menu-item>
 
                 <template v-else>
-                    <el-menu-item class='no-hover'>
-                        <el-button type='primary' plain @click='handleRoute("/dang-ky")'> Đăng ký</el-button>
+                    <el-menu-item class="no-hover">
+                        <el-button type="primary" plain @click="handleRoute('/dang-ky')"> Đăng ký</el-button>
                     </el-menu-item>
-                    <el-menu-item class='no-hover'>
-                        <el-button type='primary' @click='handleRoute("/dang-nhap")'> Đăng nhập</el-button>
+                    <el-menu-item class="no-hover">
+                        <el-button type="primary" @click="handleRoute('/dang-nhap')"> Đăng nhập</el-button>
                     </el-menu-item>
                 </template>
-
             </el-menu>
         </div>
     </el-header>
 
-    <HeaderAdmin v-if='user?.admin' />
+    <HeaderAdmin v-if="user?.admin" />
 
     <HeaderMobile />
 </template>
 
-<script lang='ts' setup>
-import { computed } from 'vue';
+<script lang="ts" setup>
+import { computed, watch } from 'vue';
 import SearchInput from '@/components/SearchInput.vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import router from '@/router';
@@ -91,7 +80,6 @@ const user = computed(() => authStore.userInfo);
 const login = computed(() => authStore.isLoggedIn);
 const httpJwt = createAxiosJwt(authStore.userInfo);
 
-
 const handleRoute = (path: any) => {
     router.push(path);
 };
@@ -103,7 +91,6 @@ const handleLogout = (user: UserInfo | null) => {
         router.push({ name: 'login' });
     }
 };
-
 </script>
 
 <style scoped>
@@ -155,7 +142,7 @@ const handleLogout = (user: UserInfo | null) => {
 
 .collapse-enter-active,
 .collapse-leave-active {
-    transition: all 0.3s ease-in-out
+    transition: all 0.3s ease-in-out;
 }
 
 .collapse-enter-from,

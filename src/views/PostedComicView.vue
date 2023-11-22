@@ -68,9 +68,9 @@
         </template>
     </el-dialog>
 
-    <PostModal ref='postRef' />
-    <ChapterModal ref='chapterRef' />
-    <UpdateModal ref='updateRef' :tableData='tableData' />
+    <PostModal ref='postRef' :table-data='tableData' />
+    <ChapterModal ref='chapterRef' :table-data='tableData' />
+    <UpdateModal ref='updateRef' :table-data='tableData' />
 </template>
 
 <script lang='ts' setup>
@@ -100,7 +100,6 @@ const currentPage = ref(1);
 const pageSize = ref(3);
 const totalData = computed(() => tableData.length)
 
-console.log(totalData)
 const handleSizeChange = () => {
 
 };
@@ -146,7 +145,12 @@ const handleDelete = async () => {
         const index = tableData.findIndex((item: any) => item._id === deleteForm.value);
         if (index !== -1) {
             tableData.splice(index, 1);
+
+            tableData.forEach((comic, index) => {
+                comic.stt = index + 1;
+            });
         }
+
         deleteVisible.value = false;
         ElMessage({
             message: 'Xóa thành công.',

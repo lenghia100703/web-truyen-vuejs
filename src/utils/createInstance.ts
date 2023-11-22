@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { http } from '@/utils/http';
 import type { UserInfo } from '@/interfaces';
@@ -28,17 +28,17 @@ interface Token {
     exp: number;
 }
 
-export const createAxiosJwt = (user: UserInfo | null) => {
+export const createAxiosJwt = (user: UserInfo | any) => {
     const newInstance = axios.create({
         withCredentials: true,
         baseURL: 'http://localhost:8888/v1',
     });
 
-    if (user !== null) {
+    if (user) {
         newInstance.interceptors.request.use(
             async (config) => {
                 let date = new Date();
-                const decodeToken: Token = jwt_decode(user?.accessToken);
+                const decodeToken: Token = jwtDecode(user?.accessToken);
                 if (decodeToken.exp < date.getTime() / 1000) {
                     const data = await refreshToken();
                     const refreshUser = {

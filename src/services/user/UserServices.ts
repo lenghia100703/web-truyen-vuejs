@@ -1,4 +1,3 @@
-import { http } from '@/utils/http';
 import { UserAPI } from '@/api/UserAPI';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { refreshToken } from '@/utils/createInstance';
@@ -16,9 +15,9 @@ export const UserServices = {
         ).data;
     },
 
-    getUserById: async (user: any) => {
+    getUserById: async (user: any, userId: string, httpJwt: any) => {
         return (
-            await http.get(UserAPI.USER_BY_ID(user._id), {
+            await httpJwt.get(UserAPI.USER_BY_ID(userId), {
                 headers: {
                     token: `Bearer ${user.accessToken}`,
                 },
@@ -26,8 +25,17 @@ export const UserServices = {
         ).data;
     },
 
-    update: async (user: any, data: any, httpJwt: any) => {
-        await httpJwt.put(UserAPI.UPDATE(user._id), data, {
+    update: async (user: any, userId: any, data: any, httpJwt: any) => {
+        const res = await httpJwt.put(UserAPI.UPDATE(userId), data, {
+            headers: {
+                token: `Bearer ${<string>user.accessToken}`,
+            },
+        });
+        return res.data;
+    },
+
+    delete: async (user: any, userId: any, httpJwt: any) => {
+        await httpJwt.delete(UserAPI.DELETE(userId), {
             headers: {
                 token: `Bearer ${user.accessToken}`,
             },
@@ -47,8 +55,8 @@ export const UserServices = {
             )
         ).data;
 
-        const updatedUser = res.updatedUser
-        console.log(res)
+        const updatedUser = res.updatedUser;
+        console.log(res);
         const data = await refreshToken();
         const newUser = {
             ...updatedUser,
@@ -56,7 +64,7 @@ export const UserServices = {
         };
         authStore.userInfo = newUser;
         localStorage.setItem('userInfo', JSON.stringify(newUser));
-        return res
+        return res;
     },
 
     unFollow: async (comicId: any, user: any, httpJwt: any) => {
@@ -71,7 +79,7 @@ export const UserServices = {
                 },
             )
         ).data;
-        const updatedUser = res.updatedUser
+        const updatedUser = res.updatedUser;
 
         const data = await refreshToken();
         const newUser = {
@@ -80,6 +88,6 @@ export const UserServices = {
         };
         authStore.userInfo = newUser;
         localStorage.setItem('userInfo', JSON.stringify(newUser));
-        return res
+        return res;
     },
 };

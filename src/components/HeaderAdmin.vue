@@ -6,7 +6,6 @@ import router from '@/router';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { UserInfo } from '@/interfaces';
-import HeaderMobile from '@/components/HeaderMobile.vue';
 
 const handleRoute = (path: string) => {
     router.push(path)
@@ -16,7 +15,6 @@ const handleRoute = (path: string) => {
 const authStore = useAuthStore();
 const user = computed(() => authStore.userInfo);
 const login = computed(() => authStore.isLoggedIn);
-const isAdmin = computed(() => user.value.admin)
 const httpJwt = createAxiosJwt(authStore.userInfo);
 
 const handleLogout = (user: UserInfo | null) => {

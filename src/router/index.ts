@@ -118,7 +118,7 @@ const router = createRouter({
             ],
         },
         {
-            path: '/the-loai/tat-ca',
+            path: '/the-loai/truyen-tranh/tat-ca',
             component: () => import('@/layouts/NavLayout.vue'),
             children: [
                 {

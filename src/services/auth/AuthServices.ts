@@ -11,11 +11,11 @@ export const AuthServices = {
             headers: {
                 token: `Bearer ${user?.accessToken}`,
             },
-        })
+        });
     },
 
     register: async (user: any) => {
-        await http.post(AuthAPI.REGISTER, user);
+        return (await http.post(AuthAPI.REGISTER, user)).data;
     },
 
     refreshToken: async () => {

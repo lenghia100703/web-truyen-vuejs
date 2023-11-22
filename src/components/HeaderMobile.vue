@@ -51,31 +51,45 @@ const handleOpenDrawer = (user: any) => {
                     <div class='collapse' v-if='isCollapse' v-bind:style="{ maxHeight: isCollapse ? '500px' : '0' }">
                         <el-menu mode='vertical' :ellipsis='false' class='menu-bar' background-color='#f1f1f1'
                                  menu-trigger='click'>
-                            <el-menu-item class='no-hover' index='1'>
-                                <SearchInput />
-                            </el-menu-item>
-                            <el-menu-item class='no-hover' index='2' @click='handleRoute("/hot")'>
-                                HOT
-                            </el-menu-item>
-                            <el-menu-item class='no-hover' index='3' @click='handleRoute("/theo-doi")'>
-                                Theo dõi
-                            </el-menu-item>
+                            <template v-if='(login && !authStore.userInfo?.admin) || !login'>
+                                <el-menu-item class='no-hover' index='1'>
+                                    <SearchInput />
+                                </el-menu-item>
+                                <el-menu-item class='no-hover' index='2' @click='handleRoute("/hot")'>
+                                    HOT
+                                </el-menu-item>
+                                <el-menu-item class='no-hover' index='3' @click='handleRoute("/theo-doi")'>
+                                    Theo dõi
+                                </el-menu-item>
 
-                            <el-sub-menu class='no-hover category' index='4'>
-                                <template #title>Thể loại</template>
-                                <el-menu-item class='no-hover' index='4-1' @click='handleRoute("/the-loai/tat-ca")'>Tất cả</el-menu-item>
-                                <el-menu-item class='no-hover' index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manga")'>
-                                    Manga
+                                <el-sub-menu class='no-hover category' index='4'>
+                                    <template #title>Thể loại</template>
+                                    <el-menu-item class='no-hover' index='4-1' @click='handleRoute("/the-loai/truyen-tranh/tat-ca")'>Tất cả</el-menu-item>
+                                    <el-menu-item class='no-hover' index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manga")'>
+                                        Manga
+                                    </el-menu-item>
+                                    <el-menu-item class='no-hover' index='4-3' @click='handleRoute("/the-loai/truyen-tranh/manhua")'>
+                                        Manhua
+                                    </el-menu-item>
+                                    <el-menu-item class='no-hover' index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manhwa")'>
+                                        Manhwa
+                                    </el-menu-item>
+                                </el-sub-menu>
+                            </template>
+                            <template v-else-if='login && authStore.userInfo?.admin'>
+                                <el-menu-item class='no-hover' index='1'>
+                                    <SearchInput />
                                 </el-menu-item>
-                                <el-menu-item class='no-hover' index='4-3' @click='handleRoute("/the-loai/truyen-tranh/manhua")'>
-                                    Manhua
+                                <el-menu-item class='no-hover' index='5' @click='handleRoute("/quan-ly/tai-khoan")'>
+                                    Quản lý người dùng
                                 </el-menu-item>
-                                <el-menu-item class='no-hover' index='4-2' @click='handleRoute("/the-loai/truyen-tranh/manhwa")'>
-                                    Manhwa
+                                <el-menu-item class='no-hover' index='6' @click='handleRoute("/quan-ly/truyen-tranh")'>
+                                    Quản lý truyện
                                 </el-menu-item>
-                            </el-sub-menu>
+                            </template>
 
-                            <el-menu-item class='no-hover' v-if='login' index='5'>
+
+                            <el-menu-item class='no-hover' v-if='login' index='7'>
                                 <span class='name-user' @click='handleOpenDrawer(user)'>
                                     <el-avatar :src='user?.avatar' class='avatar-image' />
                                     <span class='avatar'>{{ user?.username }}</span>
@@ -83,10 +97,10 @@ const handleOpenDrawer = (user: any) => {
                             </el-menu-item>
 
                             <template v-else class='no-hover'>
-                                <el-menu-item class='no-hover' index='6'>
+                                <el-menu-item class='no-hover' index='8'>
                                     <el-button type='primary' link @click='handleRoute("/dang-ky")'> Đăng ký</el-button>
                                 </el-menu-item>
-                                <el-menu-item class='no-hover' index='7'>
+                                <el-menu-item class='no-hover' index='9'>
                                     <el-button type='primary' link @click='handleRoute("/dang-nhap")'> Đăng nhập
                                     </el-button>
                                 </el-menu-item>

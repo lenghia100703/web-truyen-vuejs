@@ -4,14 +4,14 @@ import type { UserInfo } from '@/interfaces';
 
 interface AuthState {
     isLoggedIn: boolean;
-    userInfo: UserInfo | null;
+    userInfo: UserInfo | any;
 }
 
 const loggedInData = localStorage.getItem('isLoggedIn');
 const userInfoData = localStorage.getItem('userInfo');
 
 const isLoggedIn: boolean = loggedInData ? JSON.parse(loggedInData) : false;
-const userInfo: UserInfo | null = userInfoData ? JSON.parse(userInfoData) : null;
+const userInfo: UserInfo | any = userInfoData ? JSON.parse(userInfoData) : null;
 
 export const useAuthStore = defineStore({
     id: 'auth',

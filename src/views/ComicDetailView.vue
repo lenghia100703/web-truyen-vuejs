@@ -34,8 +34,8 @@
                     </el-form-item>
                 </el-form>
                 <span>
-                    <el-button type='success' :loading='followLoading' @click='handleFollow' v-if='isFollowed === false || followed === false'>Theo dõi</el-button>
-                    <el-button type='danger' :loading='unFollowLoading' @click='handleUnFollow' v-else-if='isFollowed || followed'>Hủy theo dõi</el-button>
+                    <el-button type='success' :loading='followLoading' @click='handleFollow' v-if='!followed'>Theo dõi</el-button>
+                    <el-button type='danger' :loading='unFollowLoading' @click='handleUnFollow' v-else-if='followed'>Hủy theo dõi</el-button>
                     <span class='follow-text'>{{ followCount }} Lượt theo dõi</span>
                 </span>
             </el-col>
@@ -87,6 +87,7 @@ import router from '@/router/index';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { Category, Comic, UserInfo } from '@/interfaces';
 import {loadingFullScreen} from '@/utils/loadingFullScreen';
+import { ElMessage } from 'element-plus';
 
 interface ComicBySlug {
     comic: Comic;
@@ -102,17 +103,26 @@ const httpJwt: any = createAxiosJwt(authStore.userInfo);
 const loading = ref<boolean>(false)
 const followLoading = ref<boolean>(false)
 const unFollowLoading = ref<boolean>(false)
-const isFollowed = ref<boolean>(true);
+const isFollowed = ref<boolean>(false);
 const followCount = ref<number>(0);
 const tableData = ref<any[]>([])
 
 const handleFollow = async () =>
     {
         try {
-            followLoading.value = true
-            await UserServices.follow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
-            isFollowed.value = true
-            followCount.value += 1;
+            if (authStore.isLoggedIn) {
+                followLoading.value = true
+                await UserServices.follow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
+                isFollowed.value = true
+                followCount.value += 1;
+            }
+            else {
+                ElMessage({
+                    message: 'Bạn cần đăng nhập.',
+                    type: 'warning'
+                })
+                await router.push({ name: 'login' })
+            }
         } catch (error) {
             console.error('Failed to follow' + error);
         } finally {

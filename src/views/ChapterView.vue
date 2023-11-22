@@ -171,7 +171,7 @@ const options = computed(() => {
     return newArr;
 });
 
-const handleChangeOption = (e: Event) => {
+const handleChangeOption = (e: string) => {
     router.push(e);
 };
 

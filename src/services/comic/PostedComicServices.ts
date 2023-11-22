@@ -10,11 +10,14 @@ export const PostedComicServices = {
     },
 
     create: async (data: any, user: any, httpJwt: any) => {
-        await httpJwt.post(PostedComicAPI.CREATE, data, {
-            headers: {
-                token: `Bearer ${user.accessToken}`,
-            },
-        });
+        return (
+            await httpJwt.post(PostedComicAPI.CREATE, data, {
+                headers: {
+                    token: `Bearer ${user.accessToken}`,
+                },
+            })
+        ).data;
+
     },
 
     delete: async (comicId: any, user: any, httpJwt: any) => {

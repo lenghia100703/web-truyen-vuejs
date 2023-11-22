@@ -46,9 +46,13 @@
                             },
                         ]"
                     >
-                        <el-input v-model="registerForm.password" type="password" :show-password='true' />
+                        <el-input v-model="registerForm.password" type="password" :show-password="true" />
                     </el-form-item>
-                    <el-button class="btn-submit" type="primary" :loading='submitLoading' @click="submitForm(registerFormRef)"
+                    <el-button
+                        class="btn-submit"
+                        type="primary"
+                        :loading="submitLoading"
+                        @click="submitForm(registerFormRef)"
                         >Đăng ký
                     </el-button>
                 </el-form>
@@ -75,7 +79,7 @@ interface RegisterUser {
 }
 
 const registerFormRef = ref<typeof ElForm | null>(null);
-const submitLoading = ref<boolean>(false)
+const submitLoading = ref<boolean>(false);
 const registerForm = reactive<RegisterUser>({
     username: '',
     email: '',
@@ -84,13 +88,13 @@ const registerForm = reactive<RegisterUser>({
 
 const register = async (user: RegisterUser) => {
     try {
-        submitLoading.value = true
+        submitLoading.value = true;
         await AuthServices.register(user);
         console.log('Register successful');
     } catch (error) {
         console.error('Register failed: ' + error);
     } finally {
-        submitLoading.value = false
+        submitLoading.value = false;
     }
 };
 
@@ -108,8 +112,8 @@ const submitForm = (formEl: typeof ElForm | null) => {
 };
 
 onMounted(() => {
-    loadingFullScreen('Đang xử lý')
-})
+    loadingFullScreen('Đang xử lý');
+});
 </script>
 
 <style scoped>

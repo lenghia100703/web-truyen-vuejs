@@ -20,7 +20,7 @@
                             },
                         ]"
                     >
-                        <el-input v-model="loginForm.email" type="text" />
+                        <el-input v-model="loginForm.email" type="text" autocomplete="on" />
                     </el-form-item>
                     <el-form-item
                         label="Mật khẩu"
@@ -33,9 +33,13 @@
                             },
                         ]"
                     >
-                        <el-input v-model="loginForm.password" type="password" :show-password='true'/>
+                        <el-input v-model="loginForm.password" type="password" :show-password="true" />
                     </el-form-item>
-                    <el-button class="btn-submit" type="primary" :loading='submitLoading' @click="submitForm(loginFormRef)"
+                    <el-button
+                        class="btn-submit"
+                        type="primary"
+                        :loading="submitLoading"
+                        @click="submitForm(loginFormRef)"
                         >Đăng nhập
                     </el-button>
                 </el-form>
@@ -62,27 +66,25 @@ const loginForm = reactive({
 });
 
 const loginFormRef = ref<typeof ElForm | null>(null);
-const submitLoading = ref<boolean>(false)
+const submitLoading = ref<boolean>(false);
 
 const login = async (loginForm: any) => {
     try {
-        submitLoading.value = true
+        submitLoading.value = true;
         await authStore.login(loginForm);
+    } catch (e) {
+        console.error('fail to login ' + e);
+    } finally {
+        submitLoading.value = false;
     }
-    catch (e) {
-        console.error('fail to login ' + e)
-    }
-    finally {
-        submitLoading.value = false
-    }
-}
+};
 
 const submitForm = (formEl: typeof ElForm | null) => {
     if (!formEl) return;
     formEl.validate((valid: any) => {
         loadingFullScreen('Đang xử lý');
         if (valid) {
-            login(loginForm)
+            login(loginForm);
             router.push({ name: 'home' });
         } else {
             return false;
@@ -91,8 +93,8 @@ const submitForm = (formEl: typeof ElForm | null) => {
 };
 
 onMounted(() => {
-    loadingFullScreen('Đang xử lý')
-})
+    loadingFullScreen('Đang xử lý');
+});
 </script>
 
 <style scoped>

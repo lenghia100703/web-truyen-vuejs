@@ -11,11 +11,14 @@ export const ChapterServices = {
     },
 
     create: async (data: any, comicId: any, user: any, httpJwt: any) => {
-        await httpJwt.put(ChapterAPI.CREATE(comicId), data, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                token: `Bearer ${user.accessToken}`,
-            },
-        });
+        return (
+            await httpJwt.put(ChapterAPI.CREATE(comicId), data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    token: `Bearer ${user.accessToken}`,
+                },
+            })
+        ).data;
+
     },
 };

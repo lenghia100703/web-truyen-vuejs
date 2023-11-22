@@ -15,7 +15,7 @@
         if (user !== null) {
             loadingFullScreen('Đang xử lý');
             visible.value = false
-            authStore.logout(user.value, httpJwt);
+            authStore.logout(user, httpJwt);
             router.push({ name: 'login' });
         }
     };
@@ -45,12 +45,22 @@
             <el-menu-item @click='handleRoute("/ho-so")'>
                 Hồ sơ cá nhân
             </el-menu-item>
-            <el-menu-item @click='handleRoute("/theo-doi")'>
-                Truyện đã theo dõi
-            </el-menu-item>
-            <el-menu-item @click='handleRoute("/truyen-da-dang")'>
-                Truyện đã đăng
-            </el-menu-item>
+            <template v-if='!authStore.userInfo?.admin'>
+                <el-menu-item @click='handleRoute("/theo-doi")'>
+                    Truyện đã theo dõi
+                </el-menu-item>
+                <el-menu-item @click='handleRoute("/truyen-da-dang")'>
+                    Truyện đã đăng
+                </el-menu-item>
+            </template>
+            <template v-else>
+                <el-menu-item @click='handleRoute("/quan-ly/tai-khoan")'>
+                    Quản lý người dùng
+                </el-menu-item>
+                <el-menu-item @click='handleRoute("/quan-ly/truyen-tranh")'>
+                    Quản lý truyện
+                </el-menu-item>
+            </template>
             <el-menu-item @click='() => handleLogout(userInfo)'>
                 Đăng xuất
             </el-menu-item>
