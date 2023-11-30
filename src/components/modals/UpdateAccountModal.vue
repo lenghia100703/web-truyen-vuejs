@@ -26,8 +26,9 @@ const userInfoForm = reactive<{
 });
 const userInfoFormRef = ref<typeof ElForm | null>(null);
 
+
 const props = defineProps<{
-    tableData: any[];
+    callFunction: () => Promise<void>
 }>();
 
 const handleChangeImage = () => {
@@ -47,29 +48,13 @@ const handleUpdate = async (data: any) => {
         formData.append('avatar', data.avatar);
         const res = await UserServices.update(authStore.userInfo, updateId.value, formData, httpJwt);
         visible.value = false;
-        data.username = '';
-        data.email = '';
-        data.address = '';
-        data.avatar = null;
-        const index = props.tableData.findIndex((item: any) => item._id === updateId.value);
-        if (index !== -1) {
-            props.tableData[index] = {
-                username: res.username,
-                email: res.email,
-                phone: res.phone,
-                address: res.address,
-            };
-        }
+        await props.callFunction()
         ElMessage({
             message: 'Sửa thành công.',
             type: 'success',
         });
     } catch (error) {
         console.error('Failed to submit' + error);
-        data.username = '';
-        data.email = '';
-        data.address = '';
-        data.avatar = null;
         ElMessage.error('Sửa thất bại.');
     } finally {
         updateLoading.value = false;
@@ -152,7 +137,7 @@ defineExpose({
                     },
                 ]"
             >
-                <input type="file" ref="imageInput" @change="handleChangeImage" />
+                <input class='custom-input' type="file" ref="imageInput" @change="handleChangeImage" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -166,4 +151,26 @@ defineExpose({
     </el-dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+.custom-input {
+    color: transparent;
+}
+.custom-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+.custom-input::before {
+    content: 'Chọn ảnh';
+    color: black;
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-size: 10pt;
+}
+</style>

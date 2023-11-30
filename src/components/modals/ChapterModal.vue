@@ -12,7 +12,7 @@
                     },
                 ]"
             >
-                <el-input autocomplete="off" type="text" v-model="uploadForm.title" />
+                <el-input autocomplete="off" type="text" v-model="uploadForm.title" placeholder='Nhập tên chapter theo mẫu: chapter 1' />
             </el-form-item>
             <el-form-item
                 label="Chọn ảnh cho truyện"
@@ -25,7 +25,7 @@
                     },
                 ]"
             >
-                <input type="file" multiple ref="imageInput" @change="handleChangeImages" />
+                <input class='custom-input' type="file" multiple ref="imageInput" @change="handleChangeImages" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -49,7 +49,7 @@ import { createAxiosJwt } from '@/utils/createInstance';
 const authStore = useAuthStore();
 const httpJwt = createAxiosJwt(authStore.userInfo);
 const props = defineProps<{
-    tableData: any;
+    callFunction: () => Promise<void>
 }>();
 
 const uploadModalFormRef = ref<typeof ElForm | null>(null);
@@ -73,7 +73,13 @@ const handleChangeImages = () => {
     }
 };
 
-const openModal = (rowData: any) => {
+const resetModal = (data: any) => {
+    data.title = ''
+    data.images = null
+}
+
+const openModal = async (rowData: any) => {
+    resetModal(uploadForm)
     visible.value = true;
     uploadForm._id = rowData._id;
 };
@@ -88,30 +94,13 @@ const handleUpload = async (data: any) => {
         });
         const res = await ChapterServices.create(formData, data._id, authStore.userInfo, httpJwt);
         visible.value = false;
-        const index = props.tableData.findIndex((item: any) => item._id === data._id);
-        if (index !== -1) {
-            props.tableData[index] = {
-                _id: res._id,
-                stt: index + 1,
-                name: res.name,
-                numberOfChapter: res.chapters.length,
-                view: res.view,
-                slug: res.slug,
-                description: res.description,
-            };
-        }
-        data._id = '';
-        data.title = '';
-        data.images = [];
+        await props.callFunction()
         ElMessage({
             message: 'Đăng chương truyện thành công.',
             type: 'success',
         });
     } catch (error) {
         console.error('Failed to upload chapter' + error);
-        data._id = '';
-        data.title = '';
-        data.images = [];
         ElMessage.error('Đăng thất bại.');
     } finally {
         chapterLoading.value = false;

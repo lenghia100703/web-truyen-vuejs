@@ -12,10 +12,10 @@
                     },
                 ]"
             >
-                <el-input v-model="postForm.name" type="text" />
+                <el-input v-model="postForm.name" type="text" placeholder='Nhập tên truyện' />
             </el-form-item>
             <el-form-item label="Mô tả truyện" prop="description">
-                <el-input v-model="postForm.description" type="textarea" />
+                <el-input v-model="postForm.description" type="textarea" placeholder='Nhập mô tả truyện' />
             </el-form-item>
             <el-form-item
                 label="Chọn thể loại"
@@ -48,7 +48,7 @@
                     },
                 ]"
             >
-                <el-input v-model="postForm.slug" type="text" />
+                <el-input v-model="postForm.slug" type="text" placeholder='Nhập code truyện' />
             </el-form-item>
             <el-form-item
                 label="Chọn image cho truyện"
@@ -61,7 +61,7 @@
                     },
                 ]"
             >
-                <input type="file" ref="imageInput" @change="handleChangeImage" />
+                <input class='custom-input' type="file" ref="imageInput" @change="handleChangeImage" />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -89,7 +89,7 @@ interface Option {
 }
 
 const props = defineProps<{
-    tableData: any;
+    callFunction: () => Promise<void>
 }>();
 
 const postForm = reactive<{
@@ -140,7 +140,16 @@ const handleChangeImage = () => {
 
 const handleChooseCategory = () => {};
 
+const resetModal = (data: any) => {
+    data.name = ''
+    data.description = ''
+    data.category = ''
+    data.slug = ''
+    data.image = null
+}
+
 async function openModal() {
+    resetModal(postForm)
     visible.value = true;
 }
 
@@ -159,31 +168,13 @@ const handleCreate = async (data: any) => {
         postLoading.value = true;
         const res = await PostedComicServices.create(formData, authStore.userInfo, httpJwt);
         visible.value = false;
-        props.tableData.push({
-            _id: res._id,
-            stt: props.tableData.length + 1,
-            name: res.name,
-            numberOfChapter: res.chapters.length,
-            view: res.view,
-            slug: res.slug,
-            description: res.description,
-        });
-        data.name = '';
-        data.description = '';
-        data.category = '';
-        data.slug = '';
-        data.image = null;
+        await props.callFunction()
         ElMessage({
             message: 'Đăng truyện thành công.',
             type: 'success',
         });
     } catch (error) {
         console.error('Failed to post comic' + error);
-        data.name = '';
-        data.description = '';
-        data.category = '';
-        data.slug = '';
-        data.image = null;
         ElMessage.error('Đăng truyện thất bại.');
     } finally {
         postLoading.value = false;
@@ -203,3 +194,27 @@ const submitForm = (formEl: typeof ElForm | null) => {
 
 onMounted(async () => {});
 </script>
+
+<style>
+.custom-input {
+    color: transparent;
+}
+.custom-input::-webkit-file-upload-button {
+    visibility: hidden;
+}
+.custom-input::before {
+    content: 'Chọn ảnh';
+    color: black;
+    display: inline-block;
+    background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 5px 8px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    text-shadow: 1px 1px #fff;
+    font-size: 10pt;
+}
+</style>

@@ -48,6 +48,29 @@
                     >
                         <el-input v-model="registerForm.password" type="password" :show-password="true" />
                     </el-form-item>
+                    <el-form-item
+                        label="Xác nhận mật khẩu"
+                        prop="confirmPassword"
+                        :rules="[
+                            {
+                                required: true,
+                                message: 'Vui lòng xác nhận mật khẩu',
+                                trigger: 'blur',
+                            },
+                            {
+                                validator: (rule: any, value: any, callback: any) => {
+                                    if (value !== registerForm.password) {
+                                        callback('Mật khẩu xác nhận không khớp');
+                                    } else {
+                                        callback();
+                                    }
+                                },
+                                trigger: 'blur',
+                            },
+                        ]"
+                    >
+                        <el-input v-model="registerForm.confirmPassword" type="password" :show-password="true" />
+                    </el-form-item>
                     <el-button
                         class="btn-submit"
                         type="primary"
@@ -58,7 +81,7 @@
                 </el-form>
                 <span>
                     Bạn đã có tài khoản?
-                    <router-link to="/dang-nhap">Đăng nhập</router-link>
+                    <router-link class="btn-login" :to="`/${path.LOGIN}`">Đăng nhập</router-link>
                 </span>
             </el-col>
         </el-row>
@@ -69,13 +92,15 @@
 import { onMounted, reactive, ref } from 'vue';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import router from '@/router/index';
-import { ElForm } from 'element-plus';
+import { ElForm, ElMessage } from 'element-plus';
 import { AuthServices } from '@/services/auth/AuthServices';
+import { path } from '@/constants';
 
 interface RegisterUser {
     username: string;
     email: string;
     password: string;
+    confirmPassword: string;
 }
 
 const registerFormRef = ref<typeof ElForm | null>(null);
@@ -84,6 +109,7 @@ const registerForm = reactive<RegisterUser>({
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
 });
 
 const register = async (user: RegisterUser) => {
@@ -91,8 +117,14 @@ const register = async (user: RegisterUser) => {
         submitLoading.value = true;
         await AuthServices.register(user);
         console.log('Register successful');
+        ElMessage({
+            type: 'success',
+            message: 'Đăng ký thành công.'
+        })
+        await router.push({ name: 'login' });
     } catch (error) {
         console.error('Register failed: ' + error);
+        ElMessage.error("Đăng ký thất bại. Kiểm tra lại thông tin.")
     } finally {
         submitLoading.value = false;
     }
@@ -101,10 +133,8 @@ const register = async (user: RegisterUser) => {
 const submitForm = (formEl: typeof ElForm | null) => {
     if (!formEl) return;
     formEl.validate((valid: any) => {
-        loadingFullScreen('Đang xử lý');
         if (valid) {
             register(registerForm);
-            router.push({ name: 'login' });
         } else {
             return false;
         }
@@ -123,5 +153,9 @@ onMounted(() => {
 
 .btn-submit {
     width: 100%;
+}
+
+.btn-login:hover {
+    text-decoration: underline;
 }
 </style>

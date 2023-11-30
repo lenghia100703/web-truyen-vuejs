@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang='ts'>
 import { onMounted, ref } from 'vue';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import CreateAccountModal from '@/components/modals/CreateAccountModal.vue';
@@ -7,6 +7,12 @@ import { UserServices } from '@/services/user/UserServices';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { createAxiosJwt } from '@/utils/createInstance';
 import { ElMessage } from 'element-plus';
+import ArrowRightBold from '@/components/icons/ArrowRightBold.vue';
+import Plus from '@/components/icons/Plus.vue';
+import Edit from '@/components/icons/Edit.vue';
+import Delete from '@/components/icons/Delete.vue';
+import { PostedComicServices } from '@/services/comic/PostedComicServices';
+import { Comic } from '@/interfaces';
 
 const authStore = useAuthStore();
 const httpJwt = createAxiosJwt(authStore.userInfo);
@@ -27,15 +33,30 @@ const currentPage = ref(1);
 const pageSize = ref(5);
 const totalData = ref<number>(0);
 
-const handleSizeChange = (val: number) => {};
-const handleCurrentChange = async (val: number) => {
+const handleSizeChange = (val: number) => {
+};
+
+
+const loadTableData = async () => {
     try {
         tableLoading.value = true;
-        tableData.value = (await UserServices.getAll(authStore.userInfo, val, httpJwt)).accounts;
+        tableData.value = []
+        const res = await UserServices.getAll(authStore.userInfo, currentPage.value, httpJwt);
+        tableData.value = res.accounts;
+        totalData.value = res.totalAccounts;
+    }
+    catch (e) {
+        console.error('Failed to get table data' + e);
+    } finally {
+        tableLoading.value = false
+    }
+}
+
+const handleCurrentChange = async (val: number) => {
+    try {
+        await loadTableData()
     } catch (e) {
         console.error('fail to get all comics ' + e);
-    } finally {
-        tableLoading.value = false;
     }
 };
 
@@ -43,10 +64,7 @@ const handleDelete = async () => {
     try {
         deleteLoading.value = true;
         await UserServices.delete(authStore.userInfo, deleteForm.value, httpJwt);
-        const index = tableData.value.findIndex((item: any) => item._id === deleteForm.value);
-        if (index !== -1) {
-            tableData.value.splice(index, 1);
-        }
+        await loadTableData()
         deleteVisible.value = false;
         ElMessage({
             message: 'Xóa thành công.',
@@ -63,90 +81,81 @@ const handleDelete = async () => {
 onMounted(async () => {
     loadingFullScreen('Đang xử lý');
     try {
-        tableLoading.value = true;
-        const res = await UserServices.getAll(authStore.userInfo, currentPage, httpJwt);
-        tableData.value = res.accounts;
-        totalData.value = res.totalAccounts;
+        await loadTableData()
     } catch (e) {
         console.error(e);
-    } finally {
-        tableLoading.value = false;
     }
 });
 </script>
 
 <template>
-    <el-row class="container" justify="center">
-        <el-col :span="24">
-            <div class="page-header">
-                <span class="description">
+    <el-row class='container' justify='center'>
+        <el-col :span='24'>
+            <div class='page-header'>
+                <span class='description'>
                     Quản lý tài khoản người dùng
                     <span>
-                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ea893728="" class="icon">
-                            <path
-                                fill="currentColor"
-                                d="M338.752 104.704a64 64 0 0 0 0 90.496l316.8 316.8-316.8 316.8a64 64 0 0 0 90.496 90.496l362.048-362.048a64 64 0 0 0 0-90.496L429.248 104.704a64 64 0 0 0-90.496 0z"
-                            ></path>
-                        </svg>
+                        <ArrowRightBold />
                     </span>
                 </span>
             </div>
             <el-table
-                :data="tableData"
-                v-loading="tableLoading"
-                class="table-container"
-                empty-text="Chưa có tài khoản nào"
+                :data='tableData'
+                v-loading='tableLoading'
+                class='table-container'
+                empty-text='Chưa có tài khoản nào'
             >
-                <el-table-column prop="username" label="Họ tên" />
-                <el-table-column prop="email" label="Email" width="280" />
-                <el-table-column prop="phone" label="Số điện thoại" />
-                <el-table-column prop="address" label="Địa chỉ" width="280" />
-                <el-table-column fixed="right" label="Hành động" width="150">
-                    <template v-slot="scope" class="hidden-md-and-up">
-                        <el-button type="primary" size="small" @click="updateRef?.openModal(scope.row)" plain>
-                            Sửa
-                        </el-button>
-                        <el-button type="danger" size="small" @click="openDeleteDialog(scope.row)" plain>Xóa</el-button>
+                <el-table-column prop='username' label='Họ tên' />
+                <el-table-column prop='email' label='Email' width='280' />
+                <el-table-column prop='phone' label='Số điện thoại' />
+                <el-table-column prop='address' label='Địa chỉ' width='280' />
+                <el-table-column fixed='right' label='Hành động' width='150'>
+                    <template v-slot='scope' class='hidden-md-and-up'>
+                        <el-tooltip content='Sửa' placement='left' effect='light'>
+                            <el-button type='primary' size='small' @click='updateRef?.openModal(scope.row)' plain>
+                                <Edit />
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip content='Xóa' placement='right' effect='light'>
+                            <el-button type='danger' size='small' @click='openDeleteDialog(scope.row)' plain>
+                                <Delete />
+                            </el-button>
+                        </el-tooltip>
                     </template>
                 </el-table-column>
             </el-table>
 
-            <div class="pagination">
+            <div class='pagination'>
                 <el-pagination
-                    v-model:current-page="currentPage"
-                    v-model:page-size="pageSize"
-                    :background="true"
-                    layout="prev, pager, next, jumper"
-                    :total="totalData"
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
+                    v-model:current-page='currentPage'
+                    v-model:page-size='pageSize'
+                    :background='true'
+                    layout='prev, pager, next, jumper'
+                    :total='totalData'
+                    @size-change='handleSizeChange'
+                    @current-change='handleCurrentChange'
                 />
             </div>
-            <div class="btn-add">
-                <el-button type="primary" circle size="large" class="btn" @click="createRef?.openModal()">
-                    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ea893728="" class="icon">
-                        <path
-                            fill="currentColor"
-                            d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z"
-                        ></path>
-                    </svg>
+            <div class='btn-add'>
+                <el-button type='primary' circle size='large' class='btn' @click='createRef?.openModal()'>
+                    <Plus />
                 </el-button>
             </div>
         </el-col>
     </el-row>
 
-    <el-dialog v-model="deleteVisible" title="Xóa truyện" width="30%">
+    <el-dialog v-model='deleteVisible' title='Xóa truyện' width='30%'>
         <span>Bạn có muốn xóa tài khoản này không ?</span>
         <template #footer>
-            <span class="dialog-footer">
-                <el-button @click="deleteVisible = false">Hủy bỏ</el-button>
-                <el-button type="danger" :loading="deleteLoading" @click="handleDelete"> Đồng ý </el-button>
+            <span class='dialog-footer'>
+                <el-button @click='deleteVisible = false'>Hủy bỏ</el-button>
+                <el-button type='danger' :loading='deleteLoading' @click='handleDelete'> Đồng ý </el-button>
             </span>
         </template>
     </el-dialog>
 
-    <CreateAccountModal :table-data="tableData" ref="createRef" />
-    <UpdateAccountModal :table-data="tableData" ref="updateRef" />
+    <CreateAccountModal :call-function='loadTableData' ref='createRef' />
+    <UpdateAccountModal :call-function='loadTableData' ref='updateRef' />
 </template>
 
 <style scoped>

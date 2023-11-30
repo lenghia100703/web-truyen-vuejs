@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { path } from '@/constants';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -8,7 +9,7 @@ const router = createRouter({
             component: () => import('@/layouts/DefaultLayout.vue'),
             children: [
                 {
-                    path: '',
+                    path: path.HOME,
                     component: () => import('@/views/HomeView.vue'),
                     name: 'home',
                     meta: {
@@ -17,7 +18,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'hot',
+                    path: path.HOT,
                     component: () => import('@/views/HotView.vue'),
                     name: 'hot',
                     meta: {
@@ -26,7 +27,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'dang-nhap',
+                    path: path.LOGIN,
                     component: () => import('@/views/LoginView.vue'),
                     name: 'login',
                     meta: {
@@ -35,7 +36,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'dang-ky',
+                    path: path.REGISTER,
                     component: () => import('@/views/RegisterView.vue'),
                     name: 'register',
                     meta: {
@@ -44,7 +45,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'truyen-tranh/:slug',
+                    path: path.COMIC_DETAIL(':slug'),
                     component: () => import('@/views/ComicDetailView.vue'),
                     name: 'comic-detail',
                     meta: {
@@ -53,7 +54,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'truyen-da-dang',
+                    path: path.POSTED_COMIC,
                     component: () => import('@/views/PostedComicView.vue'),
                     name: 'posted-comic',
                     meta: {
@@ -62,7 +63,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'theo-doi',
+                    path: path.FOLLOWING,
                     component: () => import('@/views/FollowingView.vue'),
                     name: 'following',
                     meta: {
@@ -71,7 +72,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'ho-so',
+                    path: path.PROFILE,
                     component: () => import('@/views/ProfileView.vue'),
                     name: 'profile',
                     meta: {
@@ -80,7 +81,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'tim-truyen/:searchText',
+                    path: path.SEARCH(':searchText'),
                     component: () => import('@/views/SearchView.vue'),
                     name: 'search',
                     meta: {
@@ -89,7 +90,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'quan-ly/tai-khoan',
+                    path: path.MANAGE_ACCOUNT,
                     component: () => import('@/views/ManageAccount.vue'),
                     name: 'manage-account',
                     meta: {
@@ -98,7 +99,7 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'quan-ly/truyen-tranh',
+                    path: path.MANAGE_COMIC,
                     component: () => import('@/views/ManageComic.vue'),
                     name: 'manage-comic',
                     meta: {
@@ -107,22 +108,22 @@ const router = createRouter({
                     },
                 },
                 {
-                    path: 'khong-tim-thay',
+                    path: path.NOT_FOUND,
                     component: () => import('@/views/NotFoundView.vue'),
                     name: 'not-found',
                     meta: {
                         adminRole: false,
                         requiredAuth: false,
                     },
-                }
+                },
             ],
         },
         {
-            path: '/the-loai/truyen-tranh/tat-ca',
+            path: '/',
             component: () => import('@/layouts/NavLayout.vue'),
             children: [
                 {
-                    path: '',
+                    path: path.CATEGORY,
                     component: () => import('@/views/CategoryView.vue'),
                     name: 'category',
                     meta: {
@@ -130,15 +131,8 @@ const router = createRouter({
                         requiresAuth: false,
                     },
                 },
-
-            ],
-        },
-        {
-            path: '/the-loai/truyen-tranh/:category',
-            component: () => import('@/layouts/NavLayout.vue'),
-            children: [
                 {
-                    path: '',
+                    path: path.CATEGORY_DETAIL(':category'),
                     component: () => import('@/views/CategoryDetailView.vue'),
                     name: 'category-detail',
                     meta: {
@@ -146,15 +140,14 @@ const router = createRouter({
                         requiresAuth: false,
                     },
                 },
-
             ],
         },
         {
-            path: '/truyen-tranh/:slug/:titleChapter',
+            path: '/',
             component: () => import('@/layouts/ChapterLayout.vue'),
             children: [
                 {
-                    path: '',
+                    path: path.CHAPTER(':slug', ':titleChapter'),
                     component: () => import('@/views/ChapterView.vue'),
                     name: 'chapter',
                     meta: {

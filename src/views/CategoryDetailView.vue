@@ -48,21 +48,6 @@ watch(
         immediate: true,
     },
 );
-
-// onMounted(async () => {
-//     try {
-//         loadingFullScreen("Đang xử lý")
-//         loading.value = true
-//         const cate = await CategoryServices.getCategoryBySlug(route.params.category);
-//         comicsData.value = await ComicServices.getComicByCategory(cate[0]._id);
-//         categoryName.value = cate[0].name;
-//         categoryDescription.value = cate[0].description;
-//     } catch (error) {
-//         console.error('Failed to load category' + error);
-//     }  finally {
-//         loading.value = false
-//     }
-// });
 </script>
 
 <template>

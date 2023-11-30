@@ -34,7 +34,8 @@
                     </el-form-item>
                 </el-form>
                 <span>
-                    <el-button type='success' :loading='followLoading' @click='handleFollow' v-if='!followed'>Theo dõi</el-button>
+                    <el-button type='success' :loading='followLoading' @click='handleFollow'
+                               v-if='!followed'>Theo dõi</el-button>
                     <el-button type='danger' :loading='unFollowLoading' @click='handleUnFollow' v-else-if='followed'>Hủy theo dõi</el-button>
                     <span class='follow-text'>{{ followCount }} Lượt theo dõi</span>
                 </span>
@@ -51,12 +52,7 @@
                 <span class='btn-more' @click='toggleCollapse'>
                     {{ isCollapsed ? 'Hiện thêm' : 'Ẩn bớt' }}
                     <span>
-                        <svg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' data-v-ea893728='' class='icon'>
-                            <path
-                                fill='currentColor'
-                                d='M340.864 149.312a30.592 30.592 0 0 0 0 42.752L652.736 512 340.864 831.872a30.592 30.592 0 0 0 0 42.752 29.12 29.12 0 0 0 41.728 0L714.24 534.336a32 32 0 0 0 0-44.672L382.592 149.376a29.12 29.12 0 0 0-41.728 0z'
-                            ></path>
-                        </svg>
+                        <ArrowRight />
                     </span>
                 </span>
             </el-col>
@@ -66,10 +62,11 @@
         </el-row>
         <el-row justify='center'>
             <el-col :span='21'>
-                <el-table :data='data' @row-click='handleRowClick' v-loading='loading' empty-text='Chưa đăng chương truyện nào'>
-                    <el-table-column label='Số chương' prop='title'></el-table-column>
-                    <el-table-column label='Ngày đăng' prop='time'></el-table-column>
-                    <el-table-column label='Lượt xem' prop='view'></el-table-column>
+                <el-table :data='data' @row-click='handleRowClick' v-loading='loading'
+                          empty-text='Chưa đăng chương truyện nào'>
+                    <el-table-column class='chapter-row' label='Số chương' prop='title'></el-table-column>
+                    <el-table-column class='chapter-row' label='Ngày đăng' prop='time'></el-table-column>
+                    <el-table-column class='chapter-row' label='Lượt xem' prop='view'></el-table-column>
                 </el-table>
             </el-col>
         </el-row>
@@ -86,8 +83,10 @@ import { CategoryServices } from '@/services/category/CategoryServices';
 import router from '@/router/index';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { Category, Comic, UserInfo } from '@/interfaces';
-import {loadingFullScreen} from '@/utils/loadingFullScreen';
+import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import { ElMessage } from 'element-plus';
+import { path } from '@/constants';
+import ArrowRight from '@/components/icons/ArrowRight.vue';
 
 interface ComicBySlug {
     comic: Comic;
@@ -100,49 +99,45 @@ const comicBySlug = ref<ComicBySlug | null>(null);
 const category = ref<Category | null>(null);
 const authStore = useAuthStore();
 const httpJwt: any = createAxiosJwt(authStore.userInfo);
-const loading = ref<boolean>(false)
-const followLoading = ref<boolean>(false)
-const unFollowLoading = ref<boolean>(false)
+const loading = ref<boolean>(false);
+const followLoading = ref<boolean>(false);
+const unFollowLoading = ref<boolean>(false);
 const isFollowed = ref<boolean>(false);
 const followCount = ref<number>(0);
-const tableData = ref<any[]>([])
+const tableData = ref<any[]>([]);
 
-const handleFollow = async () =>
-    {
+const handleFollow = async () => {
         try {
             if (authStore.isLoggedIn) {
-                followLoading.value = true
+                followLoading.value = true;
                 await UserServices.follow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
-                isFollowed.value = true
+                isFollowed.value = true;
                 followCount.value += 1;
-            }
-            else {
+            } else {
                 ElMessage({
                     message: 'Bạn cần đăng nhập.',
-                    type: 'warning'
-                })
-                await router.push({ name: 'login' })
+                    type: 'warning',
+                });
+                await router.push({ name: 'login' });
             }
         } catch (error) {
             console.error('Failed to follow' + error);
         } finally {
-            followLoading.value = false
+            followLoading.value = false;
         }
     }
 ;
 
-const handleUnFollow = async () =>
-    {
+const handleUnFollow = async () => {
         try {
-            unFollowLoading.value = true
+            unFollowLoading.value = true;
             await UserServices.unFollow(comicBySlug.value?.comic._id, authStore.userInfo, httpJwt);
-            isFollowed.value = false
+            isFollowed.value = false;
             followCount.value -= 1;
         } catch (error) {
             console.error('Failed to follow' + error);
-        }
-        finally {
-            unFollowLoading.value = false
+        } finally {
+            unFollowLoading.value = false;
         }
     }
 ;
@@ -150,7 +145,7 @@ const handleUnFollow = async () =>
 watch(
     () => route.params.slug,
     async () => {
-        loadingFullScreen('Đang xử lý')
+        loadingFullScreen('Đang xử lý');
         const res = await ComicServices.getComicBySlug(slug);
         const cate = await CategoryServices.getCategoryById(res.comic.category);
         comicBySlug.value = res;
@@ -164,19 +159,19 @@ watch(
 
 onMounted(async () => {
     try {
-        loadingFullScreen('Đang xử lý')
-        loading.value = true
+        loadingFullScreen('Đang xử lý');
+        loading.value = true;
         const res = await ComicServices.getComicBySlug(slug);
         const cate = await CategoryServices.getCategoryById(res.comic.category);
         comicBySlug.value = res;
         followCount.value = res.comic?.followCount;
         category.value = cate;
-        tableData.value = res.comic.chapters.reverse()
-        isFollowed.value = authStore.userInfo?.followComic.includes(res.comic._id) as boolean
+        tableData.value = res.comic.chapters.reverse();
+        isFollowed.value = authStore.userInfo?.followComic.includes(res.comic._id) as boolean;
     } catch (error) {
         console.error('Get Comic By Slug Failed: ' + error);
     } finally {
-        loading.value = false
+        loading.value = false;
     }
 });
 
@@ -187,10 +182,10 @@ const followed = computed(() => authStore.userInfo?.followComic.includes(<string
 
 const handleRowClick = (row: any) => {
     const numberChapters = row.title.split(' ')[1];
-    router.push(`/truyen-tranh/${route.params.slug}/chap-${numberChapters}`);
+    router.push(`/${path.CHAPTER(route.params.slug, `chap-${numberChapters}`)}`)
 };
 
-let isCollapsed = ref(true);
+const isCollapsed = ref(true);
 
 const toggleCollapse = () => {
     isCollapsed.value = !isCollapsed.value;
@@ -214,12 +209,6 @@ const toggleCollapse = () => {
 
 .follow-text {
     margin-left: 8px;
-}
-
-.icon {
-    width: 1em;
-    height: 1em;
-    margin-top: 8px;
 }
 
 .description {
@@ -253,4 +242,9 @@ const toggleCollapse = () => {
     display: flex;
     align-items: center;
 }
+
+.chapter-row {
+    cursor: pointer;
+}
+
 </style>

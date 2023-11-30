@@ -6,9 +6,10 @@ import router from '@/router';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { UserInfo } from '@/interfaces';
+import { path } from '@/constants';
 
 const handleRoute = (path: string) => {
-    router.push(path)
+    router.push(`/${path}`)
 }
 
 
@@ -30,14 +31,14 @@ const handleLogout = (user: UserInfo | null) => {
     <el-header id='header' class='hidden-sm-and-down'>
         <div class='header-content'>
             <el-menu class='menu' mode='horizontal' :ellipsis='false' background-color='#fff' menu-trigger='click'>
-                <el-menu-item class='no-hover logo' index='1' @click='handleRoute("/")'>
+                <el-menu-item class='no-hover logo' index='1' @click='handleRoute(path.HOME)'>
                     Web Truyen
                 </el-menu-item>
-                <el-menu-item class='no-hover' index='3' @click='handleRoute("/quan-ly/tai-khoan")'>
+                <el-menu-item class='no-hover' index='3' @click='handleRoute(path.MANAGE_ACCOUNT)'>
                     Quản lý người dùng
                 </el-menu-item>
 
-                <el-menu-item class='no-hover' index='4' @click='handleRoute("/quan-ly/truyen-tranh")'>
+                <el-menu-item class='no-hover' index='4' @click='handleRoute(path.MANAGE_COMIC)'>
                     Quản lý truyện
                 </el-menu-item>
                 <div class='flex-grow'></div>
@@ -53,13 +54,13 @@ const handleLogout = (user: UserInfo | null) => {
                         </span>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click='handleRoute("/ho-so")'>
+                                <el-dropdown-item @click='handleRoute(path.PROFILE)'>
                                     Hồ sơ cá nhân
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/quan-ly/tai-khoan")'>
+                                <el-dropdown-item @click='handleRoute(path.MANAGE_ACCOUNT)'>
                                     Quản lý người dùng
                                 </el-dropdown-item>
-                                <el-dropdown-item @click='handleRoute("/quan-ly/truyen-tranh")' >
+                                <el-dropdown-item @click='handleRoute(path.MANAGE_COMIC)' >
                                     Quản lý truyện
                                 </el-dropdown-item>
                                 <el-dropdown-item @click='() => handleLogout(user)'>
@@ -72,10 +73,10 @@ const handleLogout = (user: UserInfo | null) => {
 
                 <template v-else>
                     <el-menu-item class='no-hover'>
-                        <el-button type='primary' plain @click='handleRoute("/dang-ky")'> Đăng ký</el-button>
+                        <el-button type='primary' plain @click='handleRoute(path.REGISTER)'> Đăng ký</el-button>
                     </el-menu-item>
                     <el-menu-item class='no-hover'>
-                        <el-button type='primary' @click='handleRoute("/dang-nhap")'> Đăng nhập</el-button>
+                        <el-button type='primary' @click='handleRoute(path.LOGIN)'> Đăng nhập</el-button>
                     </el-menu-item>
                 </template>
 

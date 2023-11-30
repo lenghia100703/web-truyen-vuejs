@@ -11,22 +11,11 @@
                 placeholder='Tìm kiếm truyện'
             />
             <span class='loading' v-if='loading'>
-                <svg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' data-v-ea893728='' class='loading-icon'><path
-                    fill='currentColor'
-                    d='M512 64a32 32 0 0 1 32 32v192a32 32 0 0 1-64 0V96a32 32 0 0 1 32-32zm0 640a32 32 0 0 1 32 32v192a32 32 0 1 1-64 0V736a32 32 0 0 1 32-32zm448-192a32 32 0 0 1-32 32H736a32 32 0 1 1 0-64h192a32 32 0 0 1 32 32zm-640 0a32 32 0 0 1-32 32H96a32 32 0 0 1 0-64h192a32 32 0 0 1 32 32zM195.2 195.2a32 32 0 0 1 45.248 0L376.32 331.008a32 32 0 0 1-45.248 45.248L195.2 240.448a32 32 0 0 1 0-45.248zm452.544 452.544a32 32 0 0 1 45.248 0L828.8 783.552a32 32 0 0 1-45.248 45.248L647.744 692.992a32 32 0 0 1 0-45.248zM828.8 195.264a32 32 0 0 1 0 45.184L692.992 376.32a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0zm-452.544 452.48a32 32 0 0 1 0 45.248L240.448 828.8a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0z'></path></svg>
+                <Loading />
             </span>
             <button class='search-btn' type='submit'>
                 <span class='search-icon'>
-                    <svg width='20' height='20' class='DocSearch-Search-Icon' viewBox='0 0 20 20'>
-                        <path
-                            d='M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z'
-                            stroke='currentColor'
-                            fill='none'
-                            fill-rule='evenodd'
-                            stroke-linecap='round'
-                            stroke-linejoin='round'
-                        ></path>
-                    </svg>
+                    <Search />
                 </span>
             </button>
         </div>
@@ -35,7 +24,7 @@
     <div class='search-results' v-if='searchResults.length > 0 && showSearchResults'>
         <ul>
             <li v-for='(result, index) in searchResults' :key='index' @click='handleFocusLi'>
-                <router-link :to='`/truyen-tranh/${result.slug}`' class='item-container'>
+                <div @click='handleRoute(path.COMIC_DETAIL(result.slug))' class='item-container'>
                     <div class='item-container-left'>
                         <img :src='result.image' :alt='result.name' class='img-item' />
                     </div>
@@ -43,7 +32,7 @@
                         <h6 class='name-item'>{{ result.name }}</h6>
                         <span class='category-item'>Số lượng chapter: {{ result.chapters.length }}</span>
                     </div>
-                </router-link>
+                </div>
             </li>
         </ul>
     </div>
@@ -55,6 +44,9 @@ import debounce from 'lodash.debounce';
 import router from '@/router';
 import { ComicServices } from '@/services/comic/ComicServices';
 import type { Comic } from '@/interfaces';
+import { path } from '@/constants';
+import Loading from '@/components/icons/Loading.vue';
+import Search from '@/components/icons/Search.vue';
 
 const searchText = ref<string>('');
 const searchResults = ref<Comic[]>([]);
@@ -75,10 +67,14 @@ const handleFocusLi = () => {
     searchText.value = '';
 };
 
+const handleRoute = (path) => {
+    router.push(`/${path}`)
+}
+
 const handleSubmit = (e: Event) => {
     e.preventDefault();
     if (searchText.value.trim() && searchResults) {
-        router.push(`/tim-truyen/${searchText.value}`);
+        handleRoute(path.SEARCH(searchText.value))
         searchText.value = '';
         showSearchResults.value = false;
     }

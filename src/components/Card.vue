@@ -13,11 +13,12 @@
 </template>
 <script lang='ts' setup>
 import { computed } from 'vue';
+import { path } from '@/constants';
 
 const props = defineProps<{
     data: any;
 }>();
-const slug = computed(() => `/truyen-tranh/${props.data.slug}`);
+const slug = computed(() => `/${path.COMIC_DETAIL(props.data.slug)}`);
 </script>
 
 <style scoped>

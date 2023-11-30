@@ -1,6 +1,6 @@
 <template>
     <el-footer id="footer">
-        <div class="footer-content">Copyright © 2022 WebTruyen</div>
+        <div class="footer-content">Copyright © 2023 WebTruyen</div>
     </el-footer>
 </template>
 

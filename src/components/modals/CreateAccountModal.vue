@@ -7,6 +7,7 @@ const visible = ref<boolean>(false);
 const createLoading = ref<boolean>(false);
 const props = defineProps<{
     tableData: any;
+    callFunction: () => Promise<void>
 }>();
 const registerFormRef = ref<typeof ElForm | null>(null);
 const registerForm = reactive<{
@@ -19,24 +20,24 @@ const registerForm = reactive<{
     password: '',
 });
 
+const resetModal = (data: any) => {
+    data.username = ""
+    data.email = ""
+    data.password = ""
+}
+
 const handleCreate = async (data: any) => {
     try {
         createLoading.value = true;
         const res = await AuthServices.register(data);
         visible.value = false;
-        props.tableData.push(res);
-        data.username = '';
-        data.email = '';
-        data.password = '';
+        await props.callFunction()
         ElMessage({
             message: 'Tạo tài khoản thành công.',
             type: 'success',
         });
     } catch (e) {
         console.error(e);
-        data.username = '';
-        data.email = '';
-        data.password = '';
         ElMessage.error('Tạo tài khoản thất bại.');
     } finally {
         createLoading.value = false;
@@ -55,6 +56,7 @@ const submitForm = (formEl: typeof ElForm | null) => {
 };
 
 async function openModal() {
+    resetModal(registerForm)
     visible.value = true;
 }
 

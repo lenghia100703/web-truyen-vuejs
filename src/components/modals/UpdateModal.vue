@@ -12,10 +12,10 @@
                     },
                 ]"
             >
-                <el-input v-model='updateForm.name' type='text' />
+                <el-input v-model='updateForm.name' type='text' placeholder='Nhập tên truyện' />
             </el-form-item>
             <el-form-item label='Mô tả truyện' prop='description'>
-                <el-input v-model='updateForm.description' type='textarea' />
+                <el-input v-model='updateForm.description' type='textarea' placeholder='Nhập mô tả truyện' />
             </el-form-item>
             <el-form-item
                 label='Đường dẫn truyện'
@@ -28,7 +28,7 @@
                     },
                 ]"
             >
-                <el-input v-model='updateForm.slug' autocomplete='off' type='text' />
+                <el-input v-model='updateForm.slug' autocomplete='off' type='text' placeholder='Nhập code truyện' />
             </el-form-item>
         </el-form>
         <template #footer>
@@ -51,7 +51,7 @@ import { createAxiosJwt } from '@/utils/createInstance';
 const authStore = useAuthStore();
 const httpJwt = createAxiosJwt(authStore.userInfo);
 const props = defineProps<{
-    tableData: any[];
+    callFunction: () => Promise<void>
 }>();
 
 const visible = ref<boolean>(false);
@@ -71,7 +71,7 @@ const name = ref<string>('');
 const description = ref<string>('');
 const slug = ref<string>('');
 
-const openModal = (rowData: any) => {
+const openModal = async (rowData: any) => {
     visible.value = true;
     _id.value = rowData._id;
     updateForm.name = rowData.name;
@@ -84,18 +84,7 @@ const handleUpdate = async (data: any) => {
         updateLoading.value = true;
         const res = await PostedComicServices.update(_id.value, authStore.userInfo, data, httpJwt);
         visible.value = false;
-        const index = props.tableData.findIndex((item: any) => item._id === _id.value);
-        if (index !== -1) {
-            props.tableData[index] = {
-                _id: res._id,
-                stt: index + 1,
-                name: res.name,
-                numberOfChapter: res.chapters.length,
-                view: res.view,
-                slug: res.slug,
-                description: res.description,
-            };
-        }
+        await props.callFunction()
         ElMessage({
             message: 'Sửa thành công.',
             type: 'success',

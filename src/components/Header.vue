@@ -2,22 +2,22 @@
     <el-header id="header" class="hidden-sm-and-down">
         <div class="header-content">
             <el-menu class="menu" mode="horizontal" :ellipsis="false" background-color="#fff" menu-trigger="click">
-                <el-menu-item class="no-hover logo" index="1" @click="handleRoute('/')"> Web Truyen </el-menu-item>
-                <el-menu-item class="no-hover" index="2" @click="handleRoute('/hot')"> HOT </el-menu-item>
-                <el-menu-item class="no-hover" index="3" @click="handleRoute('/theo-doi')"> Theo dõi </el-menu-item>
+                <el-menu-item class="no-hover logo" index="1" @click="handleRoute(path.HOME)"> Web Truyen </el-menu-item>
+                <el-menu-item class="no-hover" index="2" @click="handleRoute(path.HOT)"> HOT </el-menu-item>
+                <el-menu-item class="no-hover" index="3" @click="handleRoute(path.FOLLOWING)"> Theo dõi </el-menu-item>
 
                 <el-sub-menu class="no-hover" index="4">
                     <template #title>Thể loại</template>
-                    <el-menu-item index="4-1" @click="handleRoute('/the-loai/truyen-tranh/tat-ca')">
+                    <el-menu-item index="4-1" @click="handleRoute(path.CATEGORY)">
                         Tất cả
                     </el-menu-item>
-                    <el-menu-item index="4-2" @click="handleRoute('/the-loai/truyen-tranh/manga')">
+                    <el-menu-item index="4-2" @click="handleRoute(path.CATEGORY_DETAIL('manga'))">
                         Manga
                     </el-menu-item>
-                    <el-menu-item index="4-3" @click="handleRoute('/the-loai/truyen-tranh/manhua')">
+                    <el-menu-item index="4-3" @click="handleRoute(path.CATEGORY_DETAIL('manhua'))">
                         Manhua
                     </el-menu-item>
-                    <el-menu-item index="4-4" @click="handleRoute('/the-loai/truyen-tranh/manhwa')">
+                    <el-menu-item index="4-4" @click="handleRoute(path.CATEGORY_DETAIL('manhwa'))">
                         Manhwa
                     </el-menu-item>
                 </el-sub-menu>
@@ -34,11 +34,11 @@
                         </span>
                         <template #dropdown>
                             <el-dropdown-menu>
-                                <el-dropdown-item @click="handleRoute('/ho-so')"> Hồ sơ cá nhân </el-dropdown-item>
-                                <el-dropdown-item @click="handleRoute('/theo-doi')">
+                                <el-dropdown-item @click="handleRoute(path.PROFILE)"> Hồ sơ cá nhân </el-dropdown-item>
+                                <el-dropdown-item @click="handleRoute(path.FOLLOWING)">
                                     Truyện đã theo dõi
                                 </el-dropdown-item>
-                                <el-dropdown-item @click="handleRoute('/truyen-da-dang')">
+                                <el-dropdown-item @click="handleRoute(path.POSTED_COMIC)">
                                     Truyện đã đăng
                                 </el-dropdown-item>
                                 <el-dropdown-item @click="() => handleLogout(user)"> Đăng xuất </el-dropdown-item>
@@ -49,10 +49,10 @@
 
                 <template v-else>
                     <el-menu-item class="no-hover">
-                        <el-button type="primary" plain @click="handleRoute('/dang-ky')"> Đăng ký</el-button>
+                        <el-button type="primary" plain @click="handleRoute(path.REGISTER)"> Đăng ký</el-button>
                     </el-menu-item>
                     <el-menu-item class="no-hover">
-                        <el-button type="primary" @click="handleRoute('/dang-nhap')"> Đăng nhập</el-button>
+                        <el-button type="primary" @click="handleRoute(path.LOGIN)"> Đăng nhập</el-button>
                     </el-menu-item>
                 </template>
             </el-menu>
@@ -74,6 +74,7 @@ import { createAxiosJwt } from '@/utils/createInstance';
 import type { UserInfo } from '@/interfaces';
 import HeaderMobile from '@/components/HeaderMobile.vue';
 import HeaderAdmin from '@/components/HeaderAdmin.vue';
+import { path } from '@/constants';
 
 const authStore = useAuthStore();
 const user = computed(() => authStore.userInfo);
@@ -81,7 +82,7 @@ const login = computed(() => authStore.isLoggedIn);
 const httpJwt = createAxiosJwt(authStore.userInfo);
 
 const handleRoute = (path: any) => {
-    router.push(path);
+    router.push(`/${path}`);
 };
 
 const handleLogout = (user: UserInfo | null) => {

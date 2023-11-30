@@ -5,12 +5,7 @@
                 <span class="description">
                     Truyện đã đăng
                     <span>
-                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ea893728="" class="icon">
-                            <path
-                                fill="currentColor"
-                                d="M338.752 104.704a64 64 0 0 0 0 90.496l316.8 316.8-316.8 316.8a64 64 0 0 0 90.496 90.496l362.048-362.048a64 64 0 0 0 0-90.496L429.248 104.704a64 64 0 0 0-90.496 0z"
-                            ></path>
-                        </svg>
+                        <ArrowRightBold />
                     </span>
                 </span>
             </div>
@@ -23,20 +18,28 @@
                 <el-table-column prop="stt" label="STT" />
                 <el-table-column prop="name" label="Tên truyện" width="250">
                     <template v-slot="scope">
-                        <router-link :to="`/truyen-tranh/${scope.row.slug}`">{{ scope.row.name }}</router-link>
+                        <router-link :to="`/${path.COMIC_DETAIL(scope.row.slug)}`">{{ scope.row.name }}</router-link>
                     </template>
                 </el-table-column>
                 <el-table-column prop="numberOfChapter" label="Số chương" />
                 <el-table-column prop="view" label="Lượt xem" />
-                <el-table-column fixed="right" label="Hành động" width="250">
+                <el-table-column fixed="right" label="Hành động" width="170">
                     <template v-slot="scope" class="hidden-md-and-up">
-                        <el-button type="primary" size="small" @click="updateRef?.openModal(scope.row)" plain>
-                            Sửa
-                        </el-button>
-                        <el-button type="danger" size="small" @click="openDeleteDialog(scope.row)" plain>Xóa</el-button>
-                        <el-button type="primary" size="small" @click="chapterRef?.openModal(scope.row)" plain
-                            >Đăng chương
-                        </el-button>
+                        <el-tooltip content="Sửa" placement="left" effect="light">
+                            <el-button type="primary" size="small" @click="updateRef?.openModal(scope.row)" plain>
+                                <Edit />
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip content="Xóa" placement="right" effect="light">
+                            <el-button type="danger" size="small" @click="openDeleteDialog(scope.row)" plain>
+                                <Delete />
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip content="Đăng chap" placement="right" effect="light">
+                            <el-button type="primary" size="small" @click="chapterRef?.openModal(scope.row)" plain>
+                                <Upload />
+                            </el-button>
+                        </el-tooltip>
                     </template>
                 </el-table-column>
             </el-table>
@@ -54,12 +57,7 @@
             </div>
             <div class="btn-add">
                 <el-button type="primary" circle size="large" class="btn" @click="postRef?.openModal()">
-                    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" data-v-ea893728="" class="icon">
-                        <path
-                            fill="currentColor"
-                            d="M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z"
-                        ></path>
-                    </svg>
+                    <Plus />
                 </el-button>
             </div>
         </el-col>
@@ -75,13 +73,13 @@
         </template>
     </el-dialog>
 
-    <PostModal ref="postRef" :table-data="tableData" />
-    <ChapterModal ref="chapterRef" :table-data="tableData" />
-    <UpdateModal ref="updateRef" :table-data="tableData" />
+    <PostModal ref="postRef" :call-function='loadTableData' />
+    <ChapterModal ref="chapterRef" :call-function='loadTableData' />
+    <UpdateModal ref="updateRef" :call-function='loadTableData' />
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { ElMessage } from 'element-plus';
 import PostModal from '@/components/modals/PostModal.vue';
@@ -90,12 +88,19 @@ import ChapterModal from '@/components/modals/ChapterModal.vue';
 import { PostedComicServices } from '@/services/comic/PostedComicServices';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { Comic, UserInfo } from '@/interfaces';
+import { loadingFullScreen } from '@/utils/loadingFullScreen';
+import { path } from '@/constants';
+import ArrowRightBold from '@/components/icons/ArrowRightBold.vue';
+import Plus from '@/components/icons/Plus.vue'
+import Edit from '@/components/icons/Edit.vue';
+import Delete from '@/components/icons/Delete.vue';
+import Upload from '@/components/icons/Upload.vue';
 
 const authStore = useAuthStore();
 const user: UserInfo | null = authStore?.userInfo;
 const httpJwt = createAxiosJwt(authStore.userInfo);
 
-let tableData = reactive<any>([]);
+const tableData = ref<any[]>([]);
 const tableLoading = ref<boolean>(false);
 const deleteLoading = ref<boolean>(false);
 
@@ -110,13 +115,14 @@ const totalData = computed(() => totalComics.value);
 
 const handleSizeChange = () => {};
 
-const handleCurrentChange = async (val: number) => {
+const loadTableData = async () => {
     try {
         tableLoading.value = true;
-        const res = await PostedComicServices.getPostedComicByUser(user, val, httpJwt);
-        tableData = [];
+        const res = await PostedComicServices.getPostedComicByUser(user, currentPage.value, httpJwt);
+        tableData.value = [];
+        totalComics.value = res.totalComics;
         res.comics.map((comic: Comic, index: number) => {
-            tableData.push({
+            tableData.value.push({
                 _id: comic._id,
                 stt: index + 1,
                 name: comic.name,
@@ -126,33 +132,29 @@ const handleCurrentChange = async (val: number) => {
                 description: comic.description,
             });
         });
+        console.log(tableData)
+    }
+    catch (e) {
+        console.error('Failed to get table data' + e);
+    } finally {
+        tableLoading.value = false
+    }
+}
+
+const handleCurrentChange = async (val: number) => {
+    try {
+        await loadTableData()
     } catch (error) {
         console.error('Failed to get table data' + error);
-    } finally {
-        tableLoading.value = false;
     }
 };
 
 onMounted(async () => {
     try {
-        tableLoading.value = true;
-        const res = await PostedComicServices.getPostedComicByUser(user, currentPage.value, httpJwt);
-        totalComics.value = res.totalComics;
-        res.comics.map((comic: Comic, index: number) => {
-            tableData.push({
-                _id: comic._id,
-                stt: index + 1,
-                name: comic.name,
-                numberOfChapter: comic.chapters.length,
-                view: comic.view,
-                slug: comic.slug,
-                description: comic.description,
-            });
-        });
+        loadingFullScreen("Đang xử lý")
+        await loadTableData()
     } catch (error) {
         console.error('Failed to get table data' + error);
-    } finally {
-        tableLoading.value = false;
     }
 });
 
@@ -168,15 +170,7 @@ const handleDelete = async () => {
     try {
         deleteLoading.value = true;
         await PostedComicServices.delete(deleteForm.value, user, httpJwt);
-        const index = tableData.findIndex((item: any) => item._id === deleteForm.value);
-        if (index !== -1) {
-            tableData.splice(index, 1);
-
-            tableData.forEach((comic: any, index: number) => {
-                comic.stt = index + 1;
-            });
-        }
-
+        await loadTableData()
         deleteVisible.value = false;
         ElMessage({
             message: 'Xóa thành công.',
@@ -203,7 +197,6 @@ const handleDelete = async () => {
     display: flex;
     align-items: center;
     font-size: 18px;
-    font-weight: 400;
 }
 
 .pagination {

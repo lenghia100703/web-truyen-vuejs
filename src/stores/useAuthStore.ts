@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { AuthServices } from '@/services/auth/AuthServices';
 import type { UserInfo } from '@/interfaces';
+import router from '@/router';
+import { ElMessage } from 'element-plus';
 
 interface AuthState {
     isLoggedIn: boolean;
@@ -27,7 +29,13 @@ export const useAuthStore = defineStore({
                 localStorage.setItem('isLoggedIn', 'true');
                 localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
                 console.log('login successful');
+                ElMessage({
+                    type: 'success',
+                    message: 'Đăng nhập thành công.'
+                })
+                await router.push({ name: 'home' })
             } catch (error) {
+                ElMessage.error('Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin đăng nhập.');
                 console.error('Login failed:' + error);
             }
         },
@@ -40,9 +48,14 @@ export const useAuthStore = defineStore({
                     localStorage.removeItem('isLoggedIn');
                     localStorage.removeItem('userInfo');
                     console.log('logout successful');
+                    ElMessage({
+                        type: 'success',
+                        message: 'Đăng xuất thành công.'
+                    })
                 })
                 .catch((error) => {
                     console.error('Fail ' + error);
+                    ElMessage.error('Đăng xuất không thành công. Vui lòng thử lại.');
                 });
         },
     },

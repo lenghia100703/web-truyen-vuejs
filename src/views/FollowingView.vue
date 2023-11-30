@@ -3,9 +3,7 @@
         <span class='description'>
             Truyện đã theo dõi
             <span>
-                <svg viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg' data-v-ea893728='' class='icon'><path
-                    fill='currentColor'
-                    d='M338.752 104.704a64 64 0 0 0 0 90.496l316.8 316.8-316.8 316.8a64 64 0 0 0 90.496 90.496l362.048-362.048a64 64 0 0 0 0-90.496L429.248 104.704a64 64 0 0 0-90.496 0z'></path></svg>
+                <ArrowRightBold />
             </span>
         </span>
     </div>
@@ -24,6 +22,7 @@ import { ComicServices } from '@/services/comic/ComicServices';
 import { createAxiosJwt } from '@/utils/createInstance';
 import type { Comic } from '@/interfaces';
 import { loadingFullScreen } from '@/utils/loadingFullScreen';
+import ArrowRightBold from '@/components/icons/ArrowRightBold.vue';
 
 const authStore = useAuthStore();
 const comicsData = ref<Comic | null>(null);
@@ -43,7 +42,6 @@ const getComic = async () => {
 };
 
 onMounted(async () => {
-
     await getComic();
 });
 </script>

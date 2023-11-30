@@ -8,6 +8,7 @@ import './assets/main.css';
 import App from '@/App.vue';
 import router from '@/router';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { path } from '@/constants';
 
 const app = createApp(App);
 
@@ -16,14 +17,14 @@ router.beforeEach((to, from, next) => {
     const login = authStore.isLoggedIn;
     const isAdmin = authStore.userInfo?.admin;
     if (to.matched.some((record) => record.meta.requiresAuth) && !login) {
-        next({ path: '/dang-nhap' });
+        next({ path: path.LOGIN });
     } else if (!login && to.matched.some((record) => record.meta.adminRole) ) {
-        next({path: '/dang-nhap'})
+        next({path: path.LOGIN})
     }
     else if (login && !isAdmin && to.matched.some((record) => record.meta.adminRole)) {
         switch (to.name) {
             case 'manage-account' || 'manage-comic':
-                next({ path: '/khong-tim-thay' });
+                next({ path: path.NOT_FOUND });
                 break;
             default:
                 next();
@@ -32,7 +33,7 @@ router.beforeEach((to, from, next) => {
     } else if (login) {
         switch (to.name) {
             case 'login' || 'register':
-                next({ path: '/' });
+                next({ path: path.HOME });
                 break;
             default:
                 next();
